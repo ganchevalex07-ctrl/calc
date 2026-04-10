@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ELVION - Калькулятор авто</title>
+    <style>
+        :root {
+            --dark-bg: #1a1a1a;
+            --accent-blue: #00bcd4;
+            --text-white: #ffffff;
+            --input-bg: #2d2d2d;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--dark-bg);
+            color: var(--text-white);
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+            flex-wrap: wrap;
+        }
+
+        .left-panel {
+            flex: 1;
+            min-width: 350px;
+            padding: 40px;
+            background: #252525;
+            border-right: 1px solid #333;
+            box-sizing: border-box;
+            z-index: 2;
+        }
+
+        .right-panel {
+            flex: 1;
+            min-width: 350px;
+            padding: 40px;
+            background-color: #1a1a1a; 
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+
+        /* Водяной знак */
+        .watermark-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
+            max-width: 600px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+            z-index: 0;
+            -webkit-mask-image: radial-gradient(circle, rgba(0,0,0,1) 40%, rgba(0,0,0,0) 90%);
+            mask-image: radial-gradient(circle, rgba(0,0,0,1) 40%, rgba(0,0,0,0) 90%);
+        }
+
+        .watermark {
+            width: 100%;
+            opacity: 0.15;
+        }
+
+        h2 { color: var(--accent-blue); margin-bottom: 25px; text-transform: uppercase; letter-spacing: 2px; }
+
+        .input-group { margin-bottom: 15px; width: 100%; }
+        label { display: block; margin-bottom: 5px; font-size: 14px; color: #bbb; }
+        .sub-text { font-size: 11px; color: #777; margin-bottom: 5px; display: block; line-height: 1.2; }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            background: var(--input-bg);
+            border: 1px solid #444;
+            border-radius: 5px;
+            color: white;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+
+        input:focus { border-color: var(--accent-blue); outline: none; }
+
+        button {
+            margin-top: 25px;
+            width: 100%;
+            padding: 18px;
+            background: var(--accent-blue);
+            color: #000;
+            font-weight: bold;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-transform: uppercase;
+            font-size: 16px;
+            transition: 0.3s;
+        }
+
+        button:hover { background: #00e5ff; transform: scale(1.01); }
+
+        /* Таблица результатов */
+        .results-display {
+            width: 100%;
+            max-width: 450px;
+            z-index: 1;
+            position: relative;
+        }
+
+        /* Синяя рамка для верхнего блока (Назва и VIN) */
+        .header-row {
+            margin-bottom: 20px;
+            padding: 20px;
+            background: rgba(0, 188, 212, 0.08);
+            border: 2px solid var(--accent-blue);
+            border-radius: 10px;
+            text-align: center;
+            backdrop-filter: blur(8px);
+        }
+
+        #res-car-name {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--accent-blue);
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        #res-vin {
+            font-size: 15px;
+            color: #fff;
+            display: block;
+            letter-spacing: 1.5px;
+            opacity: 0.8;
+        }
+
+        .res-item {
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .res-row {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .res-label { color: #ccc; font-size: 15px; }
+        .res-value { font-weight: bold; color: #fff; }
+
+        /* Синяя рамка для итога */
+        .total-row {
+            margin-top: 25px;
+            padding: 20px;
+            background: rgba(0, 188, 212, 0.15);
+            border: 2px solid var(--accent-blue);
+            border-radius: 10px;
+            text-align: center;
+            backdrop-filter: blur(8px);
+        }
+
+        .total-label { display: block; font-size: 13px; margin-bottom: 8px; color: #ccc; text-transform: uppercase; }
+        .total-amount { font-size: 32px; font-weight: bold; color: var(--accent-blue); }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="left-panel">
+        <h2>Розрахунок</h2>
+        
+        <div class="input-group">
+            <label>Назва авто</label>
+            <input type="text" id="car_name" placeholder="Наприклад: Audi E-Tron">
+        </div>
+
+        <div class="input-group">
+            <label>VIN</label>
+            <input type="text" id="vin_code" placeholder="Номер кузова">
+        </div>
+
+        <hr style="border: 0; border-top: 1px solid #444; margin: 25px 0;">
+
+        <div class="input-group">
+            <label>Вартість авто ($)</label>
+            <input type="number" id="val1" value="0">
+        </div>
+
+        <div class="input-group">
+            <label>Аукціоний збір</label>
+            <input type="number" id="val2" value="0">
+        </div>
+
+        <div class="input-group">
+            <label>Комплекс по доставці</label>
+            <span class="sub-text">Усі витрати на логістику по суші та по морю</span>
+            <input type="number" id="val3" value="0">
+        </div>
+
+        <div class="input-group">
+            <label>Страхування</label>
+            <input type="number" id="val4" value="0">
+        </div>
+
+        <div class="input-group">
+            <label>Комісія за переказ</label>
+            <input type="number" id="val5" value="0">
+        </div>
+
+        <div class="input-group">
+            <label>Митні платежі</label>
+            <input type="number" id="val6" value="0">
+        </div>
+
+        <div class="input-group">
+            <label>Послуги компанії</label>
+            <input type="number" id="val7" value="0">
+        </div>
+
+        <button onclick="calculate()">Розрахувати</button>
+    </div>
+
+    <div class="right-panel">
+        <div class="watermark-container">
+            <img src="logo.jpg" alt="" class="watermark">
+        </div>
+
+        <div class="results-display" id="resultsBlock">
+            <div class="header-row">
+                <span id="res-car-name">ELVION AUTO</span>
+                <span id="res-vin"></span>
+            </div>
+
+            <div class="res-item"><div class="res-row"><span class="res-label">Вартість авто:</span> <span id="r1" class="res-value">0 $</span></div></div>
+            <div class="res-item"><div class="res-row"><span class="res-label">Аукціоний збір:</span> <span id="r2" class="res-value">0 $</span></div></div>
+            
+            <div class="res-item">
+                <div class="res-row"><span class="res-label">Комплекс по доставці:</span> <span id="r3" class="res-value">0 $</span></div>
+                <span class="sub-text">Усі витрати на логістику по суші та по морю</span>
+            </div>
+
+            <div class="res-item"><div class="res-row"><span class="res-label">Страхування:</span> <span id="r4" class="res-value">0 $</span></div></div>
+            <div class="res-item"><div class="res-row"><span class="res-label">Комісія за переказ:</span> <span id="r5" class="res-value">0 $</span></div></div>
+            <div class="res-item"><div class="res-row"><span class="res-label">Митні платежі:</span> <span id="r6" class="res-value">0 $</span></div></div>
+            <div class="res-item"><div class="res-row"><span class="res-label">Послуги компанії:</span> <span id="r7" class="res-value">0 $</span></div></div>
+
+            <div class="total-row">
+                <span class="total-label">Вартість авто під ключ з розмитненням:</span>
+                <span class="total-amount" id="total">$ 0</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function calculate() {
+        // Название и VIN
+        const name = document.getElementById('car_name').value;
+        document.getElementById('res-car-name').innerText = name ? name : "ELVION AUTO";
+        
+        const vinValue = document.getElementById('vin_code').value;
+        document.getElementById('res-vin').innerText = vinValue ? 'VIN: ' + vinValue : '';
+
+        // Числа
+        let total = 0;
+        for(let i = 1; i <= 7; i++) {
+            let val = parseFloat(document.getElementById('val' + i).value) || 0;
+            document.getElementById('r' + i).innerText = val.toLocaleString() + ' $';
+            total += val;
+        }
+        document.getElementById('total').innerText = '$ ' + total.toLocaleString();
+    }
+</script>
+
+</body>
+</html>
