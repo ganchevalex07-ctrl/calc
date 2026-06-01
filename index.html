@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ELVION - Автокалькулятор (Версія 2.2)</title>
+    <title>ELVION - Автокалькулятор (Версія 2.3)</title>
     <style>
         :root {
             --dark-bg: #1a1a1a;
@@ -66,21 +66,21 @@
             flex: 1;
             min-width: 400px;
             position: relative;
-            overflow: hidden; /* Чтобы водяной знак не вылезал за границы */
+            overflow: hidden;
         }
 
-        /* Стили для водяного знака ELVION */
+        /* Стили для водяного знака ELVION (Выровнен на 1/4 от верха) */
         .panel-outputs::before {
             content: "ELVION";
             position: absolute;
-            top: 53%;
+            top: 25%; /* Ровно на четверть от общей высоты раздела */
             left: 50%;
             transform: translate(-50%, -50%) rotate(-15deg);
             font-size: 90px;
             font-weight: 900;
             letter-spacing: 6px;
             color: rgba(255, 255, 255, 0.035); /* Тонкий, едва заметный цвет */
-            pointer-events: none; /* Чтобы текст можно было выделять сквозь него */
+            pointer-events: none;
             z-index: 0;
             user-select: none;
         }
@@ -193,7 +193,7 @@
         @media (max-width: 1000px) {
             .calculator-grid { flex-direction: column; }
             .panel-inputs, .panel-outputs { min-width: 100%; }
-            .panel-outputs::before { font-size: 75px; } /* Чуть меньше на смартфонах */
+            .panel-outputs::before { font-size: 75px; top: 20%; } /* На смартфонах чуть повыше */
         }
     </style>
 </head>
