@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ELVION - Автокалькулятор (Версія 2.1)</title>
+    <title>ELVION - Мультикалькулятор авто</title>
     <style>
         :root {
             --dark-bg: #1a1a1a;
@@ -11,9 +11,6 @@
             --text-white: #ffffff;
             --input-bg: #2d2d2d;
             --border-color: #333;
-            --readonly-blue: rgba(0, 188, 212, 0.15);
-            --readonly-red: rgba(244, 67, 54, 0.15);
-            --green-highlight: #4caf50;
         }
 
         body, html {
@@ -25,889 +22,790 @@
             color: var(--text-white);
         }
 
-        .main-container {
-            max-width: 1300px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        .country-section {
-            background: #222222;
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 30px;
-            margin-bottom: 40px;
-        }
-
-        .country-title {
-            color: var(--accent-blue);
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            font-size: 24px;
-            margin-top: 0;
-            margin-bottom: 25px;
-            border-bottom: 2px solid var(--accent-blue);
-            padding-bottom: 10px;
-        }
-
-        .calculator-grid {
+        .container {
             display: flex;
-            gap: 40px;
+            min-height: 100vh;
             flex-wrap: wrap;
         }
 
-        .panel-inputs {
-            flex: 1.2;
-            min-width: 450px;
-        }
-
-        .panel-outputs {
+        .left-panel {
             flex: 1;
-            min-width: 400px;
+            min-width: 450px;
+            padding: 40px;
+            background: #252525;
+            border-right: 1px solid var(--border-color);
+            box-sizing: border-box;
+            z-index: 2;
         }
 
+        .right-panel {
+            flex: 1;
+            min-width: 450px;
+            padding: 40px;
+            background-color: #1a1a1a; 
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            box-sizing: border-box;
+        }
+
+        /* Водяной знак */
+        .watermark-container {
+            position: fixed;
+            top: 50%;
+            left: 75%;
+            transform: translate(-50%, -50%);
+            width: 100%;
+            max-width: 500px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.12;
+            -webkit-mask-image: radial-gradient(circle, rgba(0,0,0,1) 40%, rgba(0,0,0,0) 90%);
+            mask-image: radial-gradient(circle, rgba(0,0,0,1) 40%, rgba(0,0,0,0) 90%);
+        }
+
+        .watermark {
+            width: 100%;
+        }
+
+        .calc-section {
+            margin-bottom: 35px;
+            position: relative;
+        }
+
+        .section-divider {
+            border: 0;
+            border-top: 1px solid #444;
+            margin: 40px 0;
+        }
+
+        h2 { 
+            color: var(--accent-blue); 
+            margin-top: 0;
+            margin-bottom: 25px; 
+            text-transform: uppercase; 
+            letter-spacing: 2px; 
+            font-size: 22px;
+        }
+
+        /* Двойные поля: Ввод + Корректировка */
         .input-row-flex {
             display: flex;
-            gap: 12px;
-            margin-bottom: 12px;
-            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            align-items: flex-end;
+            width: 100%;
         }
 
-        .input-field-group {
+        .input-group { 
             flex: 2;
         }
-
-        .input-field-group.adjustment {
-            flex: 0.8;
+        
+        .input-group.adjustment {
+            flex: 1;
             min-width: 90px;
         }
 
-        label {
-            display: block;
-            margin-bottom: 4px;
-            font-size: 13px;
-            color: #bbb;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
+        label { display: block; margin-bottom: 5px; font-size: 14px; color: #bbb; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .sub-text { font-size: 11px; color: #777; margin-top: 3px; display: block; line-height: 1.2; }
 
         input {
             width: 100%;
-            padding: 10px;
+            padding: 12px;
             background: var(--input-bg);
             border: 1px solid #444;
             border-radius: 5px;
             color: white;
-            font-size: 14px;
+            font-size: 15px;
             box-sizing: border-box;
         }
+
         input:focus { border-color: var(--accent-blue); outline: none; }
+        input::placeholder { color: #555; }
 
-        input.formula-blue {
-            background: var(--readonly-blue);
-            border-color: rgba(0, 188, 212, 0.4);
-            color: #00e5ff;
-            cursor: not-allowed;
-        }
-        input.static-red {
-            background: var(--readonly-red);
-            border-color: rgba(244, 67, 54, 0.4);
-            color: #ff5252;
-            cursor: not-allowed;
+        /* Результаты справа */
+        .results-display {
+            width: 100%;
+            max-width: 500px;
+            margin-bottom: 65px;
+            z-index: 1;
+            position: relative;
         }
 
+        .results-display:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Блок Название и VIN */
         .header-row {
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             padding: 15px;
             background: rgba(0, 188, 212, 0.05);
             border: 2px solid var(--accent-blue);
             border-radius: 8px;
             text-align: center;
+            backdrop-filter: blur(8px);
         }
-        .res-car-title { font-size: 20px; font-weight: bold; color: var(--accent-blue); text-transform: uppercase; }
-        .res-vin-title { font-size: 13px; color: #fff; opacity: 0.8; letter-spacing: 1px; margin-top: 4px; display: block; }
+
+        .res-car-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: var(--accent-blue);
+            display: block;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+        }
+
+        .res-vin-title {
+            font-size: 13px;
+            color: #fff;
+            display: block;
+            letter-spacing: 1.5px;
+            opacity: 0.8;
+        }
 
         .res-item {
-            padding: 10px 0;
+            padding: 9px 0;
             border-bottom: 1px solid rgba(255,255,255,0.07);
         }
-        .res-row-data {
+
+        .res-row {
             display: flex;
             justify-content: space-between;
-            font-size: 14px;
-        }
-        .res-label { color: #ccc; }
-        .res-value { font-weight: bold; color: #fff; }
-
-        .green-highlight-box {
-            border: 1px dashed var(--green-highlight);
-            background: rgba(76, 175, 80, 0.08);
-            padding: 4px 8px;
-            border-radius: 4px;
-        }
-        .green-highlight-box .res-label { color: #a5d6a7; }
-        .green-highlight-box .res-value { 
-            font-weight: 900; 
-            text-decoration: underline; 
-            color: #66bb6a;
-            font-size: 16px;
         }
 
+        .res-label { color: #ccc; font-size: 14px; }
+        .res-value { font-weight: bold; color: #fff; font-size: 14px; }
+
+        /* Итог */
         .total-row {
-            margin-top: 25px;
-            padding: 18px;
+            margin-top: 15px;
+            padding: 15px;
             background: rgba(0, 188, 212, 0.12);
             border: 2px solid var(--accent-blue);
             border-radius: 8px;
             text-align: center;
+            backdrop-filter: blur(8px);
         }
-        .total-label { display: block; font-size: 12px; margin-bottom: 5px; color: #ccc; text-transform: uppercase; letter-spacing: 1px; }
-        .total-amount { font-size: 28px; font-weight: bold; color: var(--accent-blue); }
 
-        @media (max-width: 1000px) {
-            .calculator-grid { flex-direction: column; }
-            .panel-inputs, .panel-outputs { min-width: 100%; }
+        .total-label { display: block; font-size: 12px; margin-bottom: 5px; color: #ccc; text-transform: uppercase; }
+        .total-amount { font-size: 26px; font-weight: bold; color: var(--accent-blue); }
+
+        @media (max-width: 900px) {
+            .container { flex-direction: column; }
+            .left-panel, .right-panel { min-width: 100%; }
+            .watermark-container { display: none; }
         }
     </style>
 </head>
 <body>
 
-<div class="main-container">
+<div class="watermark-container">
+    <img src="logo.jpg" alt="" class="watermark">
+</div>
 
-    <div class="country-section">
-        <h1 class="country-title">США</h1>
-        <div class="calculator-grid">
+<div class="container">
+    
+    <div class="left-panel">
+        
+        <div class="calc-section">
+            <h2>Калькулятор США</h2>
             
-            <div class="panel-inputs">
-                <div class="input-row-flex">
-                    <div class="input-field-group">
-                        <label>Назва авто</label>
-                        <input type="text" id="usa_name" placeholder="Наприклад: Audi E-Tron" oninput="calcUSA()">
-                    </div>
-                    <div class="input-field-group">
-                        <label>VIN</label>
-                        <input type="text" id="usa_vin" placeholder="Номер кузова" oninput="calcUSA()">
-                    </div>
+            <div class="input-row-flex">
+                <div class="input-group">
+                    <label>Назва авто</label>
+                    <input type="text" id="usa_name" placeholder="Наприклад: Audi E-Tron" oninput="calculateAll()">
                 </div>
-
-                <div class="input-row-flex">
-                    <div class="input-field-group">
-                        <label>Вартість авто ($)</label>
-                        <input type="number" id="usa_in_car_val" value="0" oninput="calcUSA()">
-                    </div>
-                </div>
-
-                <div class="input-row-flex">
-                    <div class="input-field-group">
-                        <label>Аукціонний збір ($)</label>
-                        <input type="number" id="usa_in_auc" value="0" oninput="calcUSA()">
-                    </div>
-                </div>
-
-                <div class="input-row-flex">
-                    <div class="input-field-group">
-                        <label>Доставка по США ($)</label>
-                        <input type="number" id="usa_in_ship" value="0" oninput="calcUSA()">
-                    </div>
-                    <div class="input-field-group adjustment">
-                        <label>Коригув.</label>
-                        <input type="number" id="usa_corr_ship" value="0" oninput="calcUSA()">
-                    </div>
-                </div>
-
-                <div class="input-row-flex">
-                    <div class="input-field-group">
-                        <label>Собівартість комплекса з кнопкою ($)</label>
-                        <input type="number" id="usa_in_comp" value="0" oninput="calcUSA()">
-                    </div>
-                </div>
-
-                <div class="input-row-flex">
-                    <div class="input-field-group">
-                        <label>США-Гданськ [Чиста формула: Комплекс - 850 - 550]</label>
-                        <input type="number" id="usa_in_gdansk" value="0" class="formula-blue" readonly>
-                    </div>
-                    <div class="input-field-group adjustment">
-                        <label>Коригув.</label>
-                        <input type="number" id="usa_corr_gdansk" value="0" oninput="calcUSA()">
-                    </div>
-                </div>
-
-                <div class="input-row-flex">
-                    <div class="input-field-group">
-                        <label>Гданськ-Рівне [Статична]</label>
-                        <input type="number" id="usa_in_rivne" value="850" class="static-red" readonly>
-                    </div>
-                    <div class="input-field-group adjustment">
-                        <label>Коригув.</label>
-                        <input type="number" id="usa_corr_rivne" value="0" oninput="calcUSA()">
-                    </div>
-                </div>
-
-                <div class="input-row-flex">
-                    <div class="input-field-group">
-                        <label>Брокер/Експедитор [Статична]</label>
-                        <input type="number" id="usa_in_broker" value="550" class="static-red" readonly>
-                    </div>
-                    <div class="input-field-group adjustment">
-                        <label>Коригув.</label>
-                        <input type="number" id="usa_corr_broker" value="0" oninput="calcUSA()">
-                    </div>
-                </div>
-
-                <div class="input-row-flex">
-                    <div class="input-field-group">
-                        <label>Страхування (Вручну) ($)</label>
-                        <input type="number" id="usa_in_ins" value="0" oninput="calcUSA()">
-                    </div>
-                    <div class="input-field-group adjustment">
-                        <label>Коригув.</label>
-                        <input type="number" id="usa_corr_ins" value="0" oninput="calcUSA()">
-                    </div>
-                </div>
-
-                <div class="input-row-flex">
-                    <div class="input-field-group">
-                        <label>Комісія за SWIFT переказ (Вручну) ($)</label>
-                        <input type="number" id="usa_in_swift" value="0" oninput="calcUSA()">
-                    </div>
-                    <div class="input-field-group adjustment">
-                        <label>Коригув.</label>
-                        <input type="number" id="usa_corr_swift" value="0" oninput="calcUSA()">
-                    </div>
-                </div>
-
-                <div class="input-row-flex">
-                    <div class="input-field-group">
-                        <label>Митні платежі ($)</label>
-                        <input type="number" id="usa_in_customs" value="0" oninput="calcUSA()">
-                    </div>
-                </div>
-
-                <div class="input-row-flex">
-                    <div class="input-field-group">
-                        <label>Послуги компанії ($)</label>
-                        <input type="number" id="usa_in_services" value="0" oninput="calcUSA()">
-                    </div>
-                </div>
-
-                <div class="input-row-flex">
-                    <div class="input-field-group">
-                        <label>Собівартість авто [Чиста сума без коригувань]</label>
-                        <input type="number" id="usa_in_sebes_auto" value="0" class="formula-blue" readonly>
-                    </div>
-                </div>
-
-                <div class="input-row-flex">
-                    <div class="input-field-group">
-                        <label>Прибуток [Послуги + Всі Коригування]</label>
-                        <input type="number" id="usa_in_profit" value="0" class="formula-blue" readonly>
-                    </div>
+                <div class="input-group">
+                    <label>VIN</label>
+                    <input type="text" id="usa_vin" placeholder="Номер кузова" oninput="calculateAll()">
                 </div>
             </div>
 
-            <div class="panel-outputs">
-                <div class="header-row">
-                    <span class="res-car-title" id="res_usa_title">ELVION AUTO</span>
-                    <span class="res-vin-title" id="res_usa_vin_title"></span>
+            <div class="input-row-flex">
+                <div class="input-group">
+                    <label>Перший платіж ($)</label>
+                    <input type="number" id="usa_p1" value="0" oninput="calculateAll()">
                 </div>
+            </div>
 
-                <div class="res-item green-highlight-box">
-                    <div class="res-row-data"><span class="res-label">Перший платіж:</span> <span id="out_usa_p1">0 $</span></div>
+            <div class="input-row-flex">
+                <div class="input-group">
+                    <label>Вартість авто ($)</label>
+                    <input type="number" id="usa_p2" value="0" oninput="calculateAll()">
                 </div>
-                <div class="res-item"><div class="res-row-data"><span class="res-label">Вартість авто:</span> <span id="out_usa_car_val">0 $</span></div></div>
-                <div class="res-item"><div class="res-row-data"><span class="res-label">Аукціонний збір:</span> <span id="out_usa_auc">0 $</span></div></div>
-                <div class="res-item"><div class="res-row-data"><span class="res-label">Доставка по США:</span> <span id="out_usa_ship">0 $</span></div></div>
-                <div class="res-item"><div class="res-row-data"><span class="res-label">США-Гданськ:</span> <span id="out_usa_gdansk">0 $</span></div></div>
-                <div class="res-item"><div class="res-row-data"><span class="res-label">Гданськ-Рівне:</span> <span id="out_usa_rivne">850 $</span></div></div>
-                <div class="res-item"><div class="res-row-data"><span class="res-label">Брокер/Експедитор:</span> <span id="out_usa_broker">550 $</span></div></div>
-                <div class="res-item"><div class="res-row-data"><span class="res-label">Страхування:</span> <span id="out_usa_ins">0 $</span></div></div>
-                <div class="res-item"><div class="res-row-data"><span class="res-label">Комісія за SWIFT переказ:</span> <span id="out_usa_swift">0 $</span></div></div>
-                
-                <div class="res-item green-highlight-box" style="margin-top: 5px;">
-                    <div class="res-row-data"><span class="res-label">Другий платіж:</span> <span id="out_usa_p2">0 $</span></div>
-                </div>
-                <div class="res-item"><div class="res-row-data"><span class="res-label">Митні платежі:</span> <span id="out_usa_customs">0 $</span></div></div>
-                <div class="res-item"><div class="res-row-data"><span class="res-label">Послуги компанії:</span> <span id="out_usa_services">0 $</span></div></div>
+            </div>
 
-                <div class="total-row">
-                    <span class="total-label">Вартість авто з розмитненням:</span>
-                    <span class="total-amount" id="total_usa">$ 0</span>
+            <div class="input-row-flex">
+                <div class="input-group">
+                    <label>Аукціонний збір ($)</label>
+                    <input type="number" id="usa_p3" value="0" oninput="calculateAll()">
+                </div>
+            </div>
+
+            <div class="input-row-flex">
+                <div class="input-group">
+                    <label>Доставка по США ($)</label>
+                    <input type="number" id="usa_p4" value="0" oninput="calculateAll()">
+                </div>
+                <div class="input-group adjustment">
+                    <label>Коригув.</label>
+                    <input type="number" id="usa_p4_corr" value="0" oninput="calculateAll()">
+                </div>
+            </div>
+
+            <div class="input-row-flex">
+                <div class="input-group">
+                    <label>США-Гданськ ($)</label>
+                    <input type="number" id="usa_p5" value="-1400" oninput="calculateAll()">
+                </div>
+                <div class="input-group adjustment">
+                    <label>Коригув.</label>
+                    <input type="number" id="usa_p5_corr" value="0" oninput="calculateAll()">
+                </div>
+            </div>
+
+            <div class="input-row-flex">
+                <div class="input-group">
+                    <label>Гданськ-Рівне ($)</label>
+                    <input type="number" id="usa_p6" value="850" oninput="calculateAll()">
+                </div>
+                <div class="input-group adjustment">
+                    <label>Коригув.</label>
+                    <input type="number" id="usa_p6_corr" value="0" oninput="calculateAll()">
+                </div>
+            </div>
+
+            <div class="input-row-flex">
+                <div class="input-group">
+                    <label>Брокер / Експедитор ($)</label>
+                    <input type="number" id="usa_p7" value="550" oninput="calculateAll()">
+                </div>
+                <div class="input-group adjustment">
+                    <label>Коригув.</label>
+                    <input type="number" id="usa_p7_corr" value="0" oninput="calculateAll()">
+                </div>
+            </div>
+
+            <div class="input-row-flex">
+                <div class="input-group">
+                    <label>Страхування ($)</label>
+                    <input type="number" id="usa_p8" value="0" oninput="calculateAll()">
+                </div>
+                <div class="input-group adjustment">
+                    <label>Коригув.</label>
+                    <input type="number" id="usa_p8_corr" value="0" oninput="calculateAll()">
+                </div>
+            </div>
+
+            <div class="input-row-flex">
+                <div class="input-group">
+                    <label>Комісія за SWIFT переказ ($)</label>
+                    <input type="number" id="usa_p9" value="0" oninput="calculateAll()">
+                </div>
+                <div class="input-group adjustment">
+                    <label>Коригув.</label>
+                    <input type="number" id="usa_p9_corr" value="0" oninput="calculateAll()">
+                </div>
+            </div>
+
+            <div class="input-row-flex">
+                <div class="input-group">
+                    <label>Другий платіж ($)</label>
+                    <input type="number" id="usa_p10" value="0" oninput="calculateAll()">
+                </div>
+            </div>
+
+            <div class="input-row-flex">
+                <div class="input-group">
+                    <label>Митні платежі ($)</label>
+                    <input type="number" id="usa_p11" value="0" oninput="calculateAll()">
+                </div>
+            </div>
+
+            <div class="input-row-flex">
+                <div class="input-group">
+                    <label>Послуги компанії ($)</label>
+                    <input type="number" id="usa_p12" value="0" oninput="calculateAll()">
                 </div>
             </div>
         </div>
-    </div>
 
+        <hr class="section-divider">
 
-    <div class="country-section">
-        <h1 class="country-title">Корея</h1>
-        <div class="calculator-grid">
+        <div class="calc-section">
+            <h2>Калькулятор Корея</h2>
             
-            <div class="panel-inputs">
-                <div class="input-row-flex">
-                    <div class="input-field-group">
-                        <label>Назва авто</label>
-                        <input type="text" id="kor_name" placeholder="Наприклад: Kia K5" oninput="calcKorea()">
-                    </div>
-                    <div class="input-field-group">
-                        <label>VIN</label>
-                        <input type="text" id="kor_vin" placeholder="Номер кузова" oninput="calcKorea()">
-                    </div>
+            <div class="input-row-flex">
+                <div class="input-group">
+                    <label>Назва авто</label>
+                    <input type="text" id="kor_name" placeholder="Наприклад: Kia K5" oninput="calculateAll()">
                 </div>
-
-                <div class="input-row-flex">
-                    <div class="input-field-group">
-                        <label>Курс Вона до Долара</label>
-                        <input type="number" id="kor_in_rate" value="1350" oninput="calcKorea()">
-                    </div>
-                </div>
-
-                <div class="input-row-flex">
-                    <div class="input-field-group">
-                        <label>Вартість авто у ВОНАХ</label>
-                        <input type="number" id="kor_in_won" value="0" oninput="calcKorea()">
-                    </div>
-                </div>
-
-                <div class="input-row-flex">
-                    <div class="input-field-group">
-                        <label>Вартість авто у Доларах [Вон / Курс]</label>
-                        <input type="number" id="kor_in_usd" value="0" class="formula-blue" readonly>
-                    </div>
-                </div>
-
-                <div class="input-row-flex">
-                    <div class="input-field-group">
-                        <label>Комісія продавця [Статична]</label>
-                        <input type="number" id="kor_in_comm" value="550" class="static-red" readonly>
-                    </div>
-                    <div class="input-field-group adjustment">
-                        <label>Коригув.</label>
-                        <input type="number" id="kor_corr_comm" value="0" oninput="calcKorea()">
-                    </div>
-                </div>
-
-                <div class="input-row-flex">
-                    <div class="input-field-group">
-                        <label>Доставка по Кореї (60-400)</label>
-                        <input type="number" id="kor_in_ship" value="0" oninput="calcKorea()">
-                    </div>
-                    <div class="input-field-group adjustment">
-                        <label>Коригув.</label>
-                        <input type="number" id="kor_corr_ship" value="0" oninput="calcKorea()">
-                    </div>
-                </div>
-
-                <div class="input-row-flex">
-                    <div class="input-field-group">
-                        <label>Собівартість комплекса з кнопкою (2400/2800)</label>
-                        <input type="number" id="kor_in_comp" value="0" oninput="calcKorea()">
-                    </div>
-                </div>
-
-                <div class="input-row-flex">
-                    <div class="input-field-group">
-                        <label>Корея-Гданськ [Чиста формула: Комплекс - 850 - 550]</label>
-                        <input type="number" id="kor_in_gdansk" value="0" class="formula-blue" readonly>
-                    </div>
-                    <div class="input-field-group adjustment">
-                        <label>Коригув.</label>
-                        <input type="number" id="kor_corr_gdansk" value="0" oninput="calcKorea()">
-                    </div>
-                </div>
-
-                <div class="input-row-flex">
-                    <div class="input-field-group">
-                        <label>Гданськ-Рівне [Статична]</label>
-                        <input type="number" id="kor_in_rivne" value="850" class="static-red" readonly>
-                    </div>
-                    <div class="input-field-group adjustment">
-                        <label>Коригув.</label>
-                        <input type="number" id="kor_corr_rivne" value="0" oninput="calcKorea()">
-                    </div>
-                </div>
-
-                <div class="input-row-flex">
-                    <div class="input-field-group">
-                        <label>Брокер/Експедитор [Статична]</label>
-                        <input type="number" id="kor_in_broker" value="550" class="static-red" readonly>
-                    </div>
-                    <div class="input-field-group adjustment">
-                        <label>Коригув.</label>
-                        <input type="number" id="kor_corr_broker" value="0" oninput="calcKorea()">
-                    </div>
-                </div>
-
-                <div class="input-row-flex">
-                    <div class="input-field-group">
-                        <label>Страхування [Чиста формула: (Авто$ + Комісія) / 100]</label>
-                        <input type="number" id="kor_in_ins" value="0" class="formula-blue" readonly>
-                    </div>
-                    <div class="input-field-group adjustment">
-                        <label>Коригув.</label>
-                        <input type="number" id="kor_corr_ins" value="0" oninput="calcKorea()">
-                    </div>
-                </div>
-
-                <div class="input-row-flex">
-                    <div class="input-field-group">
-                        <label>Комісія за SWIFT [Чиста формула: ((4х) / 100) + 50]</label>
-                        <input type="number" id="kor_in_swift" value="0" class="formula-blue" readonly>
-                    </div>
-                    <div class="input-field-group adjustment">
-                        <label>Коригув.</label>
-                        <input type="number" id="kor_corr_swift" value="0" oninput="calcKorea()">
-                    </div>
-                </div>
-
-                <div class="input-row-flex">
-                    <div class="input-field-group">
-                        <label>Митні платежі ($)</label>
-                        <input type="number" id="kor_in_customs" value="0" oninput="calcKorea()">
-                    </div>
-                </div>
-
-                <div class="input-row-flex">
-                    <div class="input-field-group">
-                        <label>Послуги компанії ($)</label>
-                        <input type="number" id="kor_in_services" value="0" oninput="calcKorea()">
-                    </div>
-                </div>
-
-                <div class="input-row-flex">
-                    <div class="input-field-group">
-                        <label>Собівартість авто [Чиста сума без коригувань]</label>
-                        <input type="number" id="kor_in_sebes_auto" value="0" class="formula-blue" readonly>
-                    </div>
-                </div>
-
-                <div class="input-row-flex">
-                    <div class="input-field-group">
-                        <label>Прибуток [Послуги + Всі Коригування]</label>
-                        <input type="number" id="kor_in_profit" value="0" class="formula-blue" readonly>
-                    </div>
+                <div class="input-group">
+                    <label>VIN</label>
+                    <input type="text" id="kor_vin" placeholder="Номер кузова" oninput="calculateAll()">
                 </div>
             </div>
 
-            <div class="panel-outputs">
-                <div class="header-row">
-                    <span class="res-car-title" id="res_kor_title">ELVION AUTO</span>
-                    <span class="res-vin-title" id="res_kor_vin_title"></span>
+            <div class="input-row-flex">
+                <div class="input-group">
+                    <label>Курс Вона до Долара (₩ -> $)</label>
+                    <span class="sub-text">Введіть знаменник, наприклад: 1350</span>
+                    <input type="number" id="kor_rate" value="1300" oninput="calculateAll()">
                 </div>
+            </div>
 
-                <div class="res-item green-highlight-box">
-                    <div class="res-row-data"><span class="res-label">Перший платіж:</span> <span id="out_kor_p1">0 $</span></div>
+            <div class="input-row-flex">
+                <div class="input-group">
+                    <label>Вартість авто у ВОНАХ (₩)</label>
+                    <input type="number" id="kor_p1" value="0" oninput="calculateAll()">
                 </div>
-                <div class="res-item"><div class="res-row-data"><span class="res-label">Вартість авто у Доларах:</span> <span id="out_kor_car_val">0 $</span></div></div>
-                <div class="res-item"><div class="res-row-data"><span class="res-label">Комісія продавця:</span> <span id="out_kor_comm">550 $</span></div></div>
-                <div class="res-item"><div class="res-row-data"><span class="res-label">Доставка по Кореї:</span> <span id="out_kor_ship">0 $</span></div></div>
-                <div class="res-item"><div class="res-row-data"><span class="res-label">Корея-Гданськ:</span> <span id="out_kor_gdansk">0 $</span></div></div>
-                <div class="res-item"><div class="res-row-data"><span class="res-label">Гданськ-Рівне:</span> <span id="out_kor_rivne">850 $</span></div></div>
-                <div class="res-item"><div class="res-row-data"><span class="res-label">Брокер/Експедитор:</span> <span id="out_kor_broker">550 $</span></div></div>
-                <div class="res-item"><div class="res-row-data"><span class="res-label">Страхування:</span> <span id="out_kor_ins">0 $</span></div></div>
-                <div class="res-item"><div class="res-row-data"><span class="res-label">Комісія за SWIFT переказ:</span> <span id="out_kor_swift">0 $</span></div></div>
-                
-                <div class="res-item green-highlight-box" style="margin-top: 5px;">
-                    <div class="res-row-data"><span class="res-label">Другий платіж:</span> <span id="out_kor_p2">0 $</span></div>
-                </div>
-                <div class="res-item"><div class="res-row-data"><span class="res-label">Митні платежі:</span> <span id="out_kor_customs">0 $</span></div></div>
-                <div class="res-item"><div class="res-row-data"><span class="res-label">Послуги компанії:</span> <span id="out_kor_services">0 $</span></div></div>
+            </div>
 
-                <div class="total-row">
-                    <span class="total-label">Вартість авто з розмитненням:</span>
-                    <span class="total-amount" id="total_kor">$ 0</span>
+            <div class="input-row-flex">
+                <div class="input-group">
+                    <label>Комісія продавця ($)</label>
+                    <input type="number" id="kor_p2" value="550" oninput="calculateAll()">
+                </div>
+                <div class="input-group adjustment">
+                    <label>Коригув.</label>
+                    <input type="number" id="kor_p2_corr" value="0" oninput="calculateAll()">
+                </div>
+            </div>
+
+            <div class="input-row-flex">
+                <div class="input-group">
+                    <label>Доставка по Кореї ($)</label>
+                    <span class="sub-text">По карті (60 - 400)</span>
+                    <input type="number" id="kor_p3" value="0" oninput="calculateAll()">
+                </div>
+                <div class="input-group adjustment">
+                    <label>Коригув.</label>
+                    <input type="number" id="kor_p3_corr" value="0" oninput="calculateAll()">
+                </div>
+            </div>
+
+            <div class="input-row-flex">
+                <div class="input-group">
+                    <label>Корея-Гданськ ($)</label>
+                    <input type="number" id="kor_p4" value="-1400" oninput="calculateAll()">
+                </div>
+                <div class="input-group adjustment">
+                    <label>Коригув.</label>
+                    <input type="number" id="kor_p4_corr" value="0" oninput="calculateAll()">
+                </div>
+            </div>
+
+            <div class="input-row-flex">
+                <div class="input-group">
+                    <label>Гданськ-Рівне ($)</label>
+                    <input type="number" id="kor_p5" value="850" oninput="calculateAll()">
+                </div>
+                <div class="input-group adjustment">
+                    <label>Коригув.</label>
+                    <input type="number" id="kor_p5_corr" value="0" oninput="calculateAll()">
+                </div>
+            </div>
+
+            <div class="input-row-flex">
+                <div class="input-group">
+                    <label>Брокер / Експедитор ($)</label>
+                    <input type="number" id="kor_p6" value="550" oninput="calculateAll()">
+                </div>
+                <div class="input-group adjustment">
+                    <label>Коригув.</label>
+                    <input type="number" id="kor_p6_corr" value="0" oninput="calculateAll()">
+                </div>
+            </div>
+
+            <div class="input-row-flex">
+                <div class="input-group">
+                    <label>Страхування ($)</label>
+                    <input type="number" id="kor_p7" value="0" oninput="calculateAll()">
+                </div>
+                <div class="input-group adjustment">
+                    <label>Коригув.</label>
+                    <input type="number" id="kor_p7_corr" value="0" oninput="calculateAll()">
+                </div>
+            </div>
+
+            <div class="input-row-flex">
+                <div class="input-group">
+                    <label>Комісія за SWIFT переказ ($)</label>
+                    <input type="number" id="kor_p8" value="0" oninput="calculateAll()">
+                </div>
+                <div class="input-group adjustment">
+                    <label>Коригув.</label>
+                    <input type="number" id="kor_p8_corr" value="0" oninput="calculateAll()">
+                </div>
+            </div>
+
+            <div class="input-row-flex">
+                <div class="input-group">
+                    <label>Другий платіж ($)</label>
+                    <input type="number" id="kor_p9" value="0" oninput="calculateAll()">
+                </div>
+            </div>
+
+            <div class="input-row-flex">
+                <div class="input-group">
+                    <label>Митні платежі ($)</label>
+                    <input type="number" id="kor_p10" value="0" oninput="calculateAll()">
+                </div>
+            </div>
+
+            <div class="input-row-flex">
+                <div class="input-group">
+                    <label>Послуги компанії ($)</label>
+                    <input type="number" id="kor_p11" value="0" oninput="calculateAll()">
                 </div>
             </div>
         </div>
-    </div>
 
+        <hr class="section-divider">
 
-    <div class="country-section">
-        <h1 class="country-title">Китай</h1>
-        <div class="calculator-grid">
+        <div class="calc-section">
+            <h2>Калькулятор Китай</h2>
             
-            <div class="panel-inputs">
-                <div class="input-row-flex">
-                    <div class="input-field-group">
-                        <label>Назва авто</label>
-                        <input type="text" id="chn_name" placeholder="Наприклад: BYD Han" oninput="calcChina()">
-                    </div>
-                    <div class="input-field-group">
-                        <label>VIN</label>
-                        <input type="text" id="chn_vin" placeholder="Номер кузова" oninput="calcChina()">
-                    </div>
+            <div class="input-row-flex">
+                <div class="input-group">
+                    <label>Назва авто</label>
+                    <input type="text" id="chn_name" placeholder="Наприклад: BYD Han" oninput="calculateAll()">
                 </div>
-
-                <div class="input-row-flex">
-                    <div class="input-field-group">
-                        <label>Вартість авто ($)</label>
-                        <input type="number" id="chn_in_car_val" value="0" oninput="calcChina()">
-                    </div>
-                </div>
-
-                <div class="input-row-flex">
-                    <div class="input-field-group">
-                        <label>Комісія продавця ($)</label>
-                        <input type="number" id="chn_in_comm" value="0" oninput="calcChina()">
-                    </div>
-                    <div class="input-field-group adjustment">
-                        <label>Коригув.</label>
-                        <input type="number" id="chn_corr_comm" value="0" oninput="calcChina()">
-                    </div>
-                </div>
-
-                <div class="input-row-flex">
-                    <div class="input-field-group">
-                        <label>Доставка по Китаю ($)</label>
-                        <input type="number" id="chn_in_ship" value="0" oninput="calcChina()">
-                    </div>
-                    <div class="input-field-group adjustment">
-                        <label>Коригув.</label>
-                        <input type="number" id="chn_corr_ship" value="0" oninput="calcChina()">
-                    </div>
-                </div>
-
-                <div class="input-row-flex">
-                    <div class="input-field-group">
-                        <label>Собівартість комплекса з кнопкою (2900)</label>
-                        <input type="number" id="chn_in_comp" value="0" oninput="calcChina()">
-                    </div>
-                </div>
-
-                <div class="input-row-flex">
-                    <div class="input-field-group">
-                        <label>Китай-Гданськ [Чиста формула: Комплекс - 850 - 550]</label>
-                        <input type="number" id="chn_in_gdansk" value="0" class="formula-blue" readonly>
-                    </div>
-                    <div class="input-field-group adjustment">
-                        <label>Коригув.</label>
-                        <input type="number" id="chn_corr_gdansk" value="0" oninput="calcChina()">
-                    </div>
-                </div>
-
-                <div class="input-row-flex">
-                    <div class="input-field-group">
-                        <label>Гданськ-Рівне [Статична]</label>
-                        <input type="number" id="chn_in_rivne" value="850" class="static-red" readonly>
-                    </div>
-                    <div class="input-field-group adjustment">
-                        <label>Коригув.</label>
-                        <input type="number" id="chn_corr_rivne" value="0" oninput="calcChina()">
-                    </div>
-                </div>
-
-                <div class="input-row-flex">
-                    <div class="input-field-group">
-                        <label>Брокер/Експедитор [Статична]</label>
-                        <input type="number" id="chn_in_broker" value="550" class="static-red" readonly>
-                    </div>
-                    <div class="input-field-group adjustment">
-                        <label>Коригув.</label>
-                        <input type="number" id="chn_corr_broker" value="0" oninput="calcChina()">
-                    </div>
-                </div>
-
-                <div class="input-row-flex">
-                    <div class="input-field-group">
-                        <label>Страхування [Чиста формула: Вартість авто / 100]</label>
-                        <input type="number" id="chn_in_ins" value="0" class="formula-blue" readonly>
-                    </div>
-                    <div class="input-field-group adjustment">
-                        <label>Коригув.</label>
-                        <input type="number" id="chn_corr_ins" value="0" oninput="calcChina()">
-                    </div>
-                </div>
-
-                <div class="input-row-flex">
-                    <div class="input-field-group">
-                        <label>Комісія за SWIFT [Чиста формула: ((Авто + Комплекс)/100) + 50]</label>
-                        <input type="number" id="chn_in_swift" value="0" class="formula-blue" readonly>
-                    </div>
-                    <div class="input-field-group adjustment">
-                        <label>Коригув.</label>
-                        <input type="number" id="chn_corr_swift" value="0" oninput="calcChina()">
-                    </div>
-                </div>
-
-                <div class="input-row-flex">
-                    <div class="input-field-group">
-                        <label>Митні платежі ($)</label>
-                        <input type="number" id="chn_in_customs" value="0" oninput="calcChina()">
-                    </div>
-                </div>
-
-                <div class="input-row-flex">
-                    <div class="input-field-group">
-                        <label>Послуги компанії ($)</label>
-                        <input type="number" id="chn_in_services" value="0" oninput="calcChina()">
-                    </div>
-                </div>
-
-                <div class="input-row-flex">
-                    <div class="input-field-group">
-                        <label>Собівартість авто [Чиста сума без коригувань]</label>
-                        <input type="number" id="chn_in_sebes_auto" value="0" class="formula-blue" readonly>
-                    </div>
-                </div>
-
-                <div class="input-row-flex">
-                    <div class="input-field-group">
-                        <label>Прибуток [Послуги + Всі Коригування]</label>
-                        <input type="number" id="chn_in_profit" value="0" class="formula-blue" readonly>
-                    </div>
+                <div class="input-group">
+                    <label>VIN</label>
+                    <input type="text" id="chn_vin" placeholder="Номер кузова" oninput="calculateAll()">
                 </div>
             </div>
 
-            <div class="panel-outputs">
-                <div class="header-row">
-                    <span class="res-car-title" id="res_chn_title">ELVION AUTO</span>
-                    <span class="res-vin-title" id="res_chn_vin_title"></span>
+            <div class="input-row-flex">
+                <div class="input-group">
+                    <label>Перший платіж ($)</label>
+                    <input type="number" id="chn_p1" value="50" oninput="calculateAll()">
                 </div>
+            </div>
 
-                <div class="res-item green-highlight-box">
-                    <div class="res-row-data"><span class="res-label">Перший платіж:</span> <span id="out_chn_p1">0 $</span></div>
+            <div class="input-row-flex">
+                <div class="input-group">
+                    <label>Вартість авто ($)</label>
+                    <input type="number" id="chn_p2" value="0" oninput="calculateAll()">
                 </div>
-                <div class="res-item"><div class="res-row-data"><span class="res-label">Вартість авто:</span> <span id="out_chn_car_val">0 $</span></div></div>
-                <div class="res-item"><div class="res-row-data"><span class="res-label">Комісія продавця:</span> <span id="out_chn_comm">0 $</span></div></div>
-                <div class="res-item"><div class="res-row-data"><span class="res-label">Доставка по Китаю:</span> <span id="out_chn_ship">0 $</span></div></div>
-                <div class="res-item"><div class="res-row-data"><span class="res-label">Китай-Гданськ:</span> <span id="out_chn_gdansk">0 $</span></div></div>
-                <div class="res-item"><div class="res-row-data"><span class="res-label">Гданськ-Рівне:</span> <span id="out_chn_rivne">850 $</span></div></div>
-                <div class="res-item"><div class="res-row-data"><span class="res-label">Брокер/Експедитор:</span> <span id="out_chn_broker">550 $</span></div></div>
-                <div class="res-item"><div class="res-row-data"><span class="res-label">Страхування:</span> <span id="out_chn_ins">0 $</span></div></div>
-                <div class="res-item"><div class="res-row-data"><span class="res-label">Комісія за SWIFT переказ:</span> <span id="out_chn_swift">0 $</span></div></div>
-                
-                <div class="res-item green-highlight-box" style="margin-top: 5px;">
-                    <div class="res-row-data"><span class="res-label">Другий платіж:</span> <span id="out_chn_p2">0 $</span></div>
-                </div>
-                <div class="res-item"><div class="res-row-data"><span class="res-label">Митні платежі:</span> <span id="out_chn_customs">0 $</span></div></div>
-                <div class="res-item"><div class="res-row-data"><span class="res-label">Послуги компанії:</span> <span id="out_chn_services">0 $</span></div></div>
+            </div>
 
-                <div class="total-row">
-                    <span class="total-label">Вартість авто з розмитненням:</span>
-                    <span class="total-amount" id="total_chn">$ 0</span>
+            <div class="input-row-flex">
+                <div class="input-group">
+                    <label>Комісія продавця ($)</label>
+                    <input type="number" id="chn_p3" value="0" oninput="calculateAll()">
+                </div>
+                <div class="input-group adjustment">
+                    <label>Коригув.</label>
+                    <input type="number" id="chn_p3_corr" value="0" oninput="calculateAll()">
+                </div>
+            </div>
+
+            <div class="input-row-flex">
+                <div class="input-group">
+                    <label>Доставка по Китаю ($)</label>
+                    <input type="number" id="chn_p4" value="0" oninput="calculateAll()">
+                </div>
+                <div class="input-group adjustment">
+                    <label>Коригув.</label>
+                    <input type="number" id="chn_p4_corr" value="0" oninput="calculateAll()">
+                </div>
+            </div>
+
+            <div class="input-row-flex">
+                <div class="input-group">
+                    <label>Китай-Гданськ ($)</label>
+                    <input type="number" id="chn_p5" value="-1400" oninput="calculateAll()">
+                </div>
+                <div class="input-group adjustment">
+                    <label>Коригув.</label>
+                    <input type="number" id="chn_p5_corr" value="0" oninput="calculateAll()">
+                </div>
+            </div>
+
+            <div class="input-row-flex">
+                <div class="input-group">
+                    <label>Гданськ-Рівне ($)</label>
+                    <input type="number" id="chn_p6" value="850" oninput="calculateAll()">
+                </div>
+                <div class="input-group adjustment">
+                    <label>Коригув.</label>
+                    <input type="number" id="chn_p6_corr" value="0" oninput="calculateAll()">
+                </div>
+            </div>
+
+            <div class="input-row-flex">
+                <div class="input-group">
+                    <label>Брокер / Експедитор ($)</label>
+                    <input type="number" id="chn_p7" value="550" oninput="calculateAll()">
+                </div>
+                <div class="input-group adjustment">
+                    <label>Коригув.</label>
+                    <input type="number" id="chn_p7_corr" value="0" oninput="calculateAll()">
+                </div>
+            </div>
+
+            <div class="input-row-flex">
+                <div class="input-group">
+                    <label>Страхування ($)</label>
+                    <input type="number" id="chn_p8" value="0" oninput="calculateAll()">
+                </div>
+                <div class="input-group adjustment">
+                    <label>Коригув.</label>
+                    <input type="number" id="chn_p8_corr" value="0" oninput="calculateAll()">
+                </div>
+            </div>
+
+            <div class="input-row-flex">
+                <div class="input-group">
+                    <label>Комісія за SWIFT переказ ($)</label>
+                    <input type="number" id="chn_p9" value="50" oninput="calculateAll()">
+                </div>
+                <div class="input-group adjustment">
+                    <label>Коригув.</label>
+                    <input type="number" id="chn_p9_corr" value="0" oninput="calculateAll()">
+                </div>
+            </div>
+
+            <div class="input-row-flex">
+                <div class="input-group">
+                    <label>Другий платіж ($)</label>
+                    <input type="number" id="chn_p10" value="0" oninput="calculateAll()">
+                </div>
+            </div>
+
+            <div class="input-row-flex">
+                <div class="input-group">
+                    <label>Митні платежі ($)</label>
+                    <input type="number" id="chn_p11" value="0" oninput="calculateAll()">
+                </div>
+            </div>
+
+            <div class="input-row-flex">
+                <div class="input-group">
+                    <label>Послуги компанії ($)</label>
+                    <input type="number" id="chn_p12" value="0" oninput="calculateAll()">
                 </div>
             </div>
         </div>
+
     </div>
 
+    <div class="right-panel">
+        
+        <div class="results-display">
+            <div class="header-row">
+                <span class="res-car-title" id="res_usa_name">ELVION USA</span>
+                <span class="res-vin-title" id="res_usa_vin"></span>
+            </div>
+
+            <div class="res-item"><div class="res-row"><span class="res-label">Перший платіж:</span> <span id="r_usa_1" class="res-value">0 $</span></div></div>
+            <div class="res-item"><div class="res-row"><span class="res-label">Вартість авто:</span> <span id="r_usa_2" class="res-value">0 $</span></div></div>
+            <div class="res-item"><div class="res-row"><span class="res-label">Аукціонний збір:</span> <span id="r_usa_3" class="res-value">0 $</span></div></div>
+            <div class="res-item"><div class="res-row"><span class="res-label">Доставка по США:</span> <span id="r_usa_4" class="res-value">0 $</span></div></div>
+            <div class="res-item"><div class="res-row"><span class="res-label">США-Гданськ:</span> <span id="r_usa_5" class="res-value">0 $</span></div></div>
+            <div class="res-item"><div class="res-row"><span class="res-label">Гданськ-Рівне:</span> <span id="r_usa_6" class="res-value">0 $</span></div></div>
+            <div class="res-item"><div class="res-row"><span class="res-label">Брокер / Експедитор:</span> <span id="r_usa_7" class="res-value">0 $</span></div></div>
+            <div class="res-item"><div class="res-row"><span class="res-label">Страхування:</span> <span id="r_usa_8" class="res-value">0 $</span></div></div>
+            <div class="res-item"><div class="res-row"><span class="res-label">Комісія за SWIFT переказ:</span> <span id="r_usa_9" class="res-value">0 $</span></div></div>
+            <div class="res-item"><div class="res-row"><span class="res-label">Другий платіж:</span> <span id="r_usa_10" class="res-value">0 $</span></div></div>
+            <div class="res-item"><div class="res-row"><span class="res-label">Митні платежі:</span> <span id="r_usa_11" class="res-value">0 $</span></div></div>
+            <div class="res-item"><div class="res-row"><span class="res-label">Послуги компанії:</span> <span id="r_usa_12" class="res-value">0 $</span></div></div>
+
+            <div class="total-row">
+                <span class="total-label">Вартість авто США під ключ:</span>
+                <span class="total-amount" id="total_usa">$ 0</span>
+            </div>
+        </div>
+
+        <hr class="section-divider" style="width:100%; max-width:500px; margin: 0 auto 35px auto;">
+
+        <div class="results-display">
+            <div class="header-row">
+                <span class="res-car-title" id="res_kor_name">ELVION KOREA</span>
+                <span class="res-vin-title" id="res_kor_vin"></span>
+            </div>
+
+            <div class="res-item"><div class="res-row"><span class="res-label">Вартість авто у Доларах:</span> <span id="r_kor_1" class="res-value">0 $</span></div></div>
+            <div class="res-item"><div class="res-row"><span class="res-label">Комісія продавця:</span> <span id="r_kor_2" class="res-value">0 $</span></div></div>
+            <div class="res-item"><div class="res-row"><span class="res-label">Доставка по Кореї:</span> <span id="r_kor_3" class="res-value">0 $</span></div></div>
+            <div class="res-item"><div class="res-row"><span class="res-label">Корея-Гданськ:</span> <span id="r_kor_4" class="res-value">0 $</span></div></div>
+            <div class="res-item"><div class="res-row"><span class="res-label">Гданськ-Рівне:</span> <span id="r_kor_5" class="res-value">0 $</span></div></div>
+            <div class="res-item"><div class="res-row"><span class="res-label">Брокер / Експедитор:</span> <span id="r_kor_6" class="res-value">0 $</span></div></div>
+            <div class="res-item"><div class="res-row"><span class="res-label">Страхування:</span> <span id="r_kor_7" class="res-value">0 $</span></div></div>
+            <div class="res-item"><div class="res-row"><span class="res-label">Комісія за SWIFT переказ:</span> <span id="r_kor_8" class="res-value">0 $</span></div></div>
+            <div class="res-item"><div class="res-row"><span class="res-label">Другий платіж:</span> <span id="r_kor_9" class="res-value">0 $</span></div></div>
+            <div class="res-item"><div class="res-row"><span class="res-label">Митні платежі:</span> <span id="r_kor_10" class="res-value">0 $</span></div></div>
+            <div class="res-item"><div class="res-row"><span class="res-label">Послуги компанії:</span> <span id="r_kor_11" class="res-value">0 $</span></div></div>
+
+            <div class="total-row">
+                <span class="total-label">Вартість авто Корея під ключ:</span>
+                <span class="total-amount" id="total_kor">$ 0</span>
+            </div>
+        </div>
+
+        <hr class="section-divider" style="width:100%; max-width:500px; margin: 0 auto 35px auto;">
+
+        <div class="results-display">
+            <div class="header-row">
+                <span class="res-car-title" id="res_chn_name">ELVION CHINA</span>
+                <span class="res-vin-title" id="res_chn_vin"></span>
+            </div>
+
+            <div class="res-item"><div class="res-row"><span class="res-label">Перший платіж:</span> <span id="r_chn_1" class="res-value">0 $</span></div></div>
+            <div class="res-item"><div class="res-row"><span class="res-label">Вартість авто:</span> <span id="r_chn_2" class="res-value">0 $</span></div></div>
+            <div class="res-item"><div class="res-row"><span class="res-label">Комісія продавця:</span> <span id="r_chn_3" class="res-value">0 $</span></div></div>
+            <div class="res-item"><div class="res-row"><span class="res-label">Доставка по Китаю:</span> <span id="r_chn_4" class="res-value">0 $</span></div></div>
+            <div class="res-item"><div class="res-row"><span class="res-label">Китай-Гданськ:</span> <span id="r_chn_5" class="res-value">0 $</span></div></div>
+            <div class="res-item"><div class="res-row"><span class="res-label">Гданськ-Рівне:</span> <span id="r_chn_6" class="res-value">0 $</span></div></div>
+            <div class="res-item"><div class="res-row"><span class="res-label">Брокер / Експедитор:</span> <span id="r_chn_7" class="res-value">0 $</span></div></div>
+            <div class="res-item"><div class="res-row"><span class="res-label">Страхування:</span> <span id="r_chn_8" class="res-value">0 $</span></div></div>
+            <div class="res-item"><div class="res-row"><span class="res-label">Комісія за SWIFT переказ:</span> <span id="r_chn_9" class="res-value">0 $</span></div></div>
+            <div class="res-item"><div class="res-row"><span class="res-label">Другий платіж:</span> <span id="r_chn_10" class="res-value">0 $</span></div></div>
+            <div class="res-item"><div class="res-row"><span class="res-label">Митні платежі:</span> <span id="r_chn_11" class="res-value">0 $</span></div></div>
+            <div class="res-item"><div class="res-row"><span class="res-label">Послуги компанії:</span> <span id="r_chn_12" class="res-value">0 $</span></div></div>
+
+            <div class="total-row">
+                <span class="total-label">Вартість авто Китай під ключ:</span>
+                <span class="total-amount" id="total_chn">$ 0</span>
+            </div>
+        </div>
+
+    </div>
 </div>
 
 <script>
-    function calcUSA() {
-        const name = document.getElementById('usa_name').value || "ELVION AUTO";
-        const vin = document.getElementById('usa_vin').value;
-        document.getElementById('res_usa_title').innerText = name;
-        document.getElementById('res_usa_vin_title').innerText = vin ? 'VIN: ' + vin : '';
+    // Повністю автоматичний розрахунок для трьох секцій разом з коригуваннями
+    function calculateAll() {
+        // --- 1. СЕКЦІЯ: США ---
+        const usaName = document.getElementById('usa_name').value;
+        document.getElementById('res_usa_name').innerText = usaName ? usaName : "ELVION USA";
+        const usaVin = document.getElementById('usa_vin').value;
+        document.getElementById('res_usa_vin').innerText = usaVin ? 'VIN: ' + usaVin : '';
 
-        // ВВОД
-        const carVal = parseFloat(document.getElementById('usa_in_car_val').value) || 0;
-        const auc = parseFloat(document.getElementById('usa_in_auc').value) || 0;
-        const comp = parseFloat(document.getElementById('usa_in_comp').value) || 0;
-        const ship = parseFloat(document.getElementById('usa_in_ship').value) || 0;
+        const usa_p1 = Math.round(parseFloat(document.getElementById('usa_p1').value) || 0);
+        const usa_p2 = Math.round(parseFloat(document.getElementById('usa_p2').value) || 0);
+        const usa_p3 = Math.round(parseFloat(document.getElementById('usa_p3').value) || 0);
         
-        const pure_gdansk = comp - 850 - 550; 
-        document.getElementById('usa_in_gdansk').value = Math.round(pure_gdansk);
-
-        const ins = parseFloat(document.getElementById('usa_in_ins').value) || 0;
-        const swift = parseFloat(document.getElementById('usa_in_swift').value) || 0;
-        const customs = parseFloat(document.getElementById('usa_in_customs').value) || 0;
-        const services = parseFloat(document.getElementById('usa_in_services').value) || 0;
-
-        const sebesAuto = carVal + auc + ship + comp + ins + swift + customs;
-        document.getElementById('usa_in_sebes_auto').value = Math.round(sebesAuto);
-
-        // КОРИГУВАННЯ
-        const c_ship = parseFloat(document.getElementById('usa_corr_ship').value) || 0;
-        const c_gdansk = parseFloat(document.getElementById('usa_corr_gdansk').value) || 0;
-        const c_rivne = parseFloat(document.getElementById('usa_corr_rivne').value) || 0;
-        const c_broker = parseFloat(document.getElementById('usa_corr_broker').value) || 0;
-        const c_ins = parseFloat(document.getElementById('usa_corr_ins').value) || 0;
-        const c_swift = parseFloat(document.getElementById('usa_corr_swift').value) || 0;
-
-        const profit = services + c_ship + c_gdansk + c_rivne + c_broker + c_ins + c_swift;
-        document.getElementById('usa_in_profit').value = Math.round(profit);
-
-        // ВЫВОД
-        const out_car_val = carVal;
-        const out_auc = auc;
-        const out_ship = ship + c_ship;
-        const out_gdansk = pure_gdansk + c_gdansk;
-        const out_rivne = 850 + c_rivne;
-        const out_broker = 550 + c_broker;
-        const out_ins = ins + c_ins;
-        const out_swift = swift + c_swift;
-        const out_customs = customs;
-        const out_services = services;
-
-        const p1 = out_car_val + out_auc + out_ship + out_gdansk + out_rivne + out_broker + out_ins + out_swift;
-        const p2 = out_customs + out_services;
-
-        document.getElementById('out_usa_p1').innerText = Math.round(p1).toLocaleString() + ' $';
-        document.getElementById('out_usa_car_val').innerText = Math.round(out_car_val).toLocaleString() + ' $';
-        document.getElementById('out_usa_auc').innerText = Math.round(out_auc).toLocaleString() + ' $';
-        document.getElementById('out_usa_ship').innerText = Math.round(out_ship).toLocaleString() + ' $';
-        document.getElementById('out_usa_gdansk').innerText = Math.round(out_gdansk).toLocaleString() + ' $';
-        document.getElementById('out_usa_rivne').innerText = Math.round(out_rivne).toLocaleString() + ' $';
-        document.getElementById('out_usa_broker').innerText = Math.round(out_broker).toLocaleString() + ' $';
-        document.getElementById('out_usa_ins').innerText = Math.round(out_ins).toLocaleString() + ' $';
-        document.getElementById('out_usa_swift').innerText = Math.round(out_swift).toLocaleString() + ' $';
-        document.getElementById('out_usa_p2').innerText = Math.round(p2).toLocaleString() + ' $';
-        document.getElementById('out_usa_customs').innerText = Math.round(out_customs).toLocaleString() + ' $';
-        document.getElementById('out_usa_services').innerText = Math.round(out_services).toLocaleString() + ' $';
-
-        document.getElementById('total_usa').innerText = '$ ' + Math.round(p1 + p2).toLocaleString();
-    }
-
-    function calcKorea() {
-        const name = document.getElementById('kor_name').value || "ELVION AUTO";
-        const vin = document.getElementById('kor_vin').value;
-        document.getElementById('res_kor_title').innerText = name;
-        document.getElementById('res_kor_vin_title').innerText = vin ? 'VIN: ' + vin : '';
-
-        // ВВОД
-        const rate = parseFloat(document.getElementById('kor_in_rate').value) || 1;
-        const won = parseFloat(document.getElementById('kor_in_won').value) || 0;
+        // Враховуємо суму основного поля та поля коригування
+        const usa_p4 = Math.round((parseFloat(document.getElementById('usa_p4').value) || 0) + (parseFloat(document.getElementById('usa_p4_corr').value) || 0));
+        const usa_p5 = Math.round((parseFloat(document.getElementById('usa_p5').value) || 0) + (parseFloat(document.getElementById('usa_p5_corr').value) || 0));
+        const usa_p6 = Math.round((parseFloat(document.getElementById('usa_p6').value) || 0) + (parseFloat(document.getElementById('usa_p6_corr').value) || 0));
+        const usa_p7 = Math.round((parseFloat(document.getElementById('usa_p7').value) || 0) + (parseFloat(document.getElementById('usa_p7_corr').value) || 0));
+        const usa_p8 = Math.round((parseFloat(document.getElementById('usa_p8').value) || 0) + (parseFloat(document.getElementById('usa_p8_corr').value) || 0));
+        const usa_p9 = Math.round((parseFloat(document.getElementById('usa_p9').value) || 0) + (parseFloat(document.getElementById('usa_p9_corr').value) || 0));
         
-        const usdVal = rate > 0 ? (won / rate) : 0;
-        document.getElementById('kor_in_usd').value = Math.round(usdVal);
+        const usa_p10 = Math.round(parseFloat(document.getElementById('usa_p10').value) || 0);
+        const usa_p11 = Math.round(parseFloat(document.getElementById('usa_p11').value) || 0);
+        const usa_p12 = Math.round(parseFloat(document.getElementById('usa_p12').value) || 0);
 
-        const comm = 550; 
-        const ship = parseFloat(document.getElementById('kor_in_ship').value) || 0;
-        const comp = parseFloat(document.getElementById('kor_in_comp').value) || 0;
+        // Виведення елементів США
+        document.getElementById('r_usa_1').innerText = usa_p1.toLocaleString() + ' $';
+        document.getElementById('r_usa_2').innerText = usa_p2.toLocaleString() + ' $';
+        document.getElementById('r_usa_3').innerText = usa_p3.toLocaleString() + ' $';
+        document.getElementById('r_usa_4').innerText = usa_p4.toLocaleString() + ' $';
+        document.getElementById('r_usa_5').innerText = usa_p5.toLocaleString() + ' $';
+        document.getElementById('r_usa_6').innerText = usa_p6.toLocaleString() + ' $';
+        document.getElementById('r_usa_7').innerText = usa_p7.toLocaleString() + ' $';
+        document.getElementById('r_usa_8').innerText = usa_p8.toLocaleString() + ' $';
+        document.getElementById('r_usa_9').innerText = usa_p9.toLocaleString() + ' $';
+        document.getElementById('r_usa_10').innerText = usa_p10.toLocaleString() + ' $';
+        document.getElementById('r_usa_11').innerText = usa_p11.toLocaleString() + ' $';
+        document.getElementById('r_usa_12').innerText = usa_p12.toLocaleString() + ' $';
 
-        const pure_gdansk = comp - 850 - 550;
-        document.getElementById('kor_in_gdansk').value = Math.round(pure_gdansk);
+        // Разом під ключ за формулою з таблиці
+        const totalUsa = usa_p1 + usa_p2 + usa_p3 + usa_p4 + usa_p5 + usa_p6 + usa_p7 + usa_p8 + usa_p9 + usa_p10 + usa_p11 + usa_p12;
+        document.getElementById('total_usa').innerText = '$ ' + totalUsa.toLocaleString();
 
-        const pure_ins = (usdVal + comm) / 100;
-        document.getElementById('kor_in_ins').value = Math.round(pure_ins);
 
-        const pure_swift = ((usdVal + comm + ship + comp) / 100) + 50;
-        document.getElementById('kor_in_swift').value = Math.round(pure_swift);
+        // --- 2. СЕКЦІЯ: КОРЕЯ ---
+        const korName = document.getElementById('kor_name').value;
+        document.getElementById('res_kor_name').innerText = korName ? korName : "ELVION KOREA";
+        const korVin = document.getElementById('kor_vin').value;
+        document.getElementById('res_kor_vin').innerText = korVin ? 'VIN: ' + korVin : '';
 
-        const customs = parseFloat(document.getElementById('kor_in_customs').value) || 0;
-        const services = parseFloat(document.getElementById('kor_in_services').value) || 0;
+        const korRate = parseFloat(document.getElementById('kor_rate').value) || 1;
+        const korWon = parseFloat(document.getElementById('kor_p1').value) || 0;
+        
+        // Вартість у доларах = Вона / Курс
+        const kor_p1_usd = Math.round(korWon / korRate);
 
-        const sebesAuto = usdVal + comm + ship + comp + pure_ins + pure_swift + customs;
-        document.getElementById('kor_in_sebes_auto').value = Math.round(sebesAuto);
+        const kor_p2 = Math.round((parseFloat(document.getElementById('kor_p2').value) || 0) + (parseFloat(document.getElementById('kor_p2_corr').value) || 0));
+        const kor_p3 = Math.round((parseFloat(document.getElementById('kor_p3').value) || 0) + (parseFloat(document.getElementById('kor_p3_corr').value) || 0));
+        const kor_p4 = Math.round((parseFloat(document.getElementById('kor_p4').value) || 0) + (parseFloat(document.getElementById('kor_p4_corr').value) || 0));
+        const kor_p5 = Math.round((parseFloat(document.getElementById('kor_p5').value) || 0) + (parseFloat(document.getElementById('kor_p5_corr').value) || 0));
+        const kor_p6 = Math.round((parseFloat(document.getElementById('kor_p6').value) || 0) + (parseFloat(document.getElementById('kor_p6_corr').value) || 0));
+        const kor_p7 = Math.round((parseFloat(document.getElementById('kor_p7').value) || 0) + (parseFloat(document.getElementById('kor_p7_corr').value) || 0));
+        const kor_p8 = Math.round((parseFloat(document.getElementById('kor_p8').value) || 0) + (parseFloat(document.getElementById('kor_p8_corr').value) || 0));
+        
+        const kor_p9 = Math.round(parseFloat(document.getElementById('kor_p9').value) || 0);
+        const kor_p10 = Math.round(parseFloat(document.getElementById('kor_p10').value) || 0);
+        const kor_p11 = Math.round(parseFloat(document.getElementById('kor_p11').value) || 0);
 
-        // КОРИГУВАННЯ
-        const c_comm = parseFloat(document.getElementById('kor_corr_comm').value) || 0;
-        const c_ship = parseFloat(document.getElementById('kor_corr_ship').value) || 0;
-        const c_gdansk = parseFloat(document.getElementById('kor_corr_gdansk').value) || 0;
-        const c_rivne = parseFloat(document.getElementById('kor_corr_rivne').value) || 0;
-        const c_broker = parseFloat(document.getElementById('kor_corr_broker').value) || 0;
-        const c_ins = parseFloat(document.getElementById('kor_corr_ins').value) || 0;
-        const c_swift = parseFloat(document.getElementById('kor_corr_swift').value) || 0;
+        // Виведення елементів Кореї
+        document.getElementById('r_kor_1').innerText = kor_p1_usd.toLocaleString() + ' $';
+        document.getElementById('r_kor_2').innerText = kor_p2.toLocaleString() + ' $';
+        document.getElementById('r_kor_3').innerText = kor_p3.toLocaleString() + ' $';
+        document.getElementById('r_kor_4').innerText = kor_p4.toLocaleString() + ' $';
+        document.getElementById('r_kor_5').innerText = kor_p5.toLocaleString() + ' $';
+        document.getElementById('r_kor_6').innerText = kor_p6.toLocaleString() + ' $';
+        document.getElementById('r_kor_7').innerText = kor_p7.toLocaleString() + ' $';
+        document.getElementById('r_kor_8').innerText = kor_p8.toLocaleString() + ' $';
+        document.getElementById('r_kor_9').innerText = kor_p9.toLocaleString() + ' $';
+        document.getElementById('r_kor_10').innerText = kor_p10.toLocaleString() + ' $';
+        document.getElementById('r_kor_11').innerText = kor_p11.toLocaleString() + ' $';
 
-        const profit = services + c_comm + c_ship + c_gdansk + c_rivne + c_broker + c_ins + c_swift;
-        document.getElementById('kor_in_profit').value = Math.round(profit);
+        const totalKor = kor_p1_usd + kor_p2 + kor_p3 + kor_p4 + kor_p5 + kor_p6 + kor_p7 + kor_p8 + kor_p9 + kor_p10 + kor_p11;
+        document.getElementById('total_kor').innerText = '$ ' + totalKor.toLocaleString();
 
-        // ВЫВОД
-        const out_usdVal = usdVal;
-        const out_comm = comm + c_comm;
-        const out_ship = ship + c_ship;
-        const out_gdansk = pure_gdansk + c_gdansk;
-        const out_rivne = 850 + c_rivne;
-        const out_broker = 550 + c_broker;
-        const out_ins = pure_ins + c_ins;
-        const out_swift = pure_swift + c_swift;
-        const out_customs = customs;
-        const out_services = services;
 
-        const p1 = out_usdVal + out_comm + out_ship + out_gdansk + out_rivne + out_broker + out_ins + out_swift;
-        const p2 = out_customs + out_services;
+        // --- 3. СЕКЦІЯ: КИТАЙ ---
+        const chnName = document.getElementById('chn_name').value;
+        document.getElementById('res_chn_name').innerText = chnName ? chnName : "ELVION CHINA";
+        const chnVin = document.getElementById('chn_vin').value;
+        document.getElementById('res_chn_vin').innerText = chnVin ? 'VIN: ' + chnVin : '';
 
-        document.getElementById('out_kor_p1').innerText = Math.round(p1).toLocaleString() + ' $';
-        document.getElementById('out_kor_car_val').innerText = Math.round(out_usdVal).toLocaleString() + ' $';
-        document.getElementById('out_kor_comm').innerText = Math.round(out_comm).toLocaleString() + ' $';
-        document.getElementById('out_kor_ship').innerText = Math.round(out_ship).toLocaleString() + ' $';
-        document.getElementById('out_kor_gdansk').innerText = Math.round(out_gdansk).toLocaleString() + ' $';
-        document.getElementById('out_kor_rivne').innerText = Math.round(out_rivne).toLocaleString() + ' $';
-        document.getElementById('out_kor_broker').innerText = Math.round(out_broker).toLocaleString() + ' $';
-        document.getElementById('out_kor_ins').innerText = Math.round(out_ins).toLocaleString() + ' $';
-        document.getElementById('out_kor_swift').innerText = Math.round(out_swift).toLocaleString() + ' $';
-        document.getElementById('out_kor_p2').innerText = Math.round(p2).toLocaleString() + ' $';
-        document.getElementById('out_kor_customs').innerText = Math.round(out_customs).toLocaleString() + ' $';
-        document.getElementById('out_kor_services').innerText = Math.round(out_services).toLocaleString() + ' $';
+        const chn_p1 = Math.round(parseFloat(document.getElementById('chn_p1').value) || 0);
+        const chn_p2 = Math.round(parseFloat(document.getElementById('chn_p2').value) || 0);
+        
+        const chn_p3 = Math.round((parseFloat(document.getElementById('chn_p3').value) || 0) + (parseFloat(document.getElementById('chn_p3_corr').value) || 0));
+        const chn_p4 = Math.round((parseFloat(document.getElementById('chn_p4').value) || 0) + (parseFloat(document.getElementById('chn_p4_corr').value) || 0));
+        const chn_p5 = Math.round((parseFloat(document.getElementById('chn_p5').value) || 0) + (parseFloat(document.getElementById('chn_p5_corr').value) || 0));
+        const chn_p6 = Math.round((parseFloat(document.getElementById('chn_p6').value) || 0) + (parseFloat(document.getElementById('chn_p6_corr').value) || 0));
+        const chn_p7 = Math.round((parseFloat(document.getElementById('chn_p7').value) || 0) + (parseFloat(document.getElementById('chn_p7_corr').value) || 0));
+        const chn_p8 = Math.round((parseFloat(document.getElementById('chn_p8').value) || 0) + (parseFloat(document.getElementById('chn_p8_corr').value) || 0));
+        const chn_p9 = Math.round((parseFloat(document.getElementById('chn_p9').value) || 0) + (parseFloat(document.getElementById('chn_p9_corr').value) || 0));
+        
+        const chn_p10 = Math.round(parseFloat(document.getElementById('chn_p10').value) || 0);
+        const chn_p11 = Math.round(parseFloat(document.getElementById('chn_p11').value) || 0);
+        const chn_p12 = Math.round(parseFloat(document.getElementById('chn_p12').value) || 0);
 
-        document.getElementById('total_kor').innerText = '$ ' + Math.round(p1 + p2).toLocaleString();
+        // Виведення елементів Китаю
+        document.getElementById('r_chn_1').innerText = chn_p1.toLocaleString() + ' $';
+        document.getElementById('r_chn_2').innerText = chn_p2.toLocaleString() + ' $';
+        document.getElementById('r_chn_3').innerText = chn_p3.toLocaleString() + ' $';
+        document.getElementById('r_chn_4').innerText = chn_p4.toLocaleString() + ' $';
+        document.getElementById('r_chn_5').innerText = chn_p5.toLocaleString() + ' $';
+        document.getElementById('r_chn_6').innerText = chn_p6.toLocaleString() + ' $';
+        document.getElementById('r_chn_7').innerText = chn_p7.toLocaleString() + ' $';
+        document.getElementById('r_chn_8').innerText = chn_p8.toLocaleString() + ' $';
+        document.getElementById('r_chn_9').innerText = chn_p9.toLocaleString() + ' $';
+        document.getElementById('r_chn_10').innerText = chn_p10.toLocaleString() + ' $';
+        document.getElementById('r_chn_11').innerText = chn_p11.toLocaleString() + ' $';
+        document.getElementById('r_chn_12').innerText = chn_p12.toLocaleString() + ' $';
+
+        const totalChn = chn_p1 + chn_p2 + chn_p3 + chn_p4 + chn_p5 + chn_p6 + chn_p7 + chn_p8 + chn_p9 + chn_p10 + chn_p11 + chn_p12;
+        document.getElementById('total_chn').innerText = '$ ' + totalChn.toLocaleString();
     }
 
-    function calcChina() {
-        const name = document.getElementById('chn_name').value || "ELVION AUTO";
-        const vin = document.getElementById('chn_vin').value;
-        document.getElementById('res_chn_title').innerText = name;
-        document.getElementById('res_chn_vin_title').innerText = vin ? 'VIN: ' + vin : '';
-
-        // ВВОД
-        const carVal = parseFloat(document.getElementById('chn_in_car_val').value) || 0;
-        const comm = parseFloat(document.getElementById('chn_in_comm').value) || 0;
-        const ship = parseFloat(document.getElementById('chn_in_ship').value) || 0;
-        const comp = parseFloat(document.getElementById('chn_in_comp').value) || 0;
-
-        const pure_gdansk = comp - 850 - 550;
-        document.getElementById('chn_in_gdansk').value = Math.round(pure_gdansk);
-
-        const pure_ins = carVal / 100;
-        document.getElementById('chn_in_ins').value = Math.round(pure_ins);
-
-        const pure_swift = ((carVal + comp) / 100) + 50;
-        document.getElementById('chn_in_swift').value = Math.round(pure_swift);
-
-        const customs = parseFloat(document.getElementById('chn_in_customs').value) || 0;
-        const services = parseFloat(document.getElementById('chn_in_services').value) || 0;
-
-        const sebesAuto = carVal + comp + pure_ins + pure_swift + customs;
-        document.getElementById('chn_in_sebes_auto').value = Math.round(sebesAuto);
-
-        // КОРИГУВАННЯ
-        const c_comm = parseFloat(document.getElementById('chn_corr_comm').value) || 0;
-        const c_ship = parseFloat(document.getElementById('chn_corr_ship').value) || 0;
-        const c_gdansk = parseFloat(document.getElementById('chn_corr_gdansk').value) || 0;
-        const c_rivne = parseFloat(document.getElementById('chn_corr_rivne').value) || 0;
-        const c_broker = parseFloat(document.getElementById('chn_corr_broker').value) || 0;
-        const c_ins = parseFloat(document.getElementById('chn_corr_ins').value) || 0;
-        const c_swift = parseFloat(document.getElementById('chn_corr_swift').value) || 0;
-
-        const profit = services + c_comm + c_ship + c_gdansk + c_rivne + c_broker + c_ins + c_swift;
-        document.getElementById('chn_in_profit').value = Math.round(profit);
-
-        // ВЫВОД
-        const out_car_val = carVal;
-        const out_comm = comm + c_comm;
-        const out_ship = ship + c_ship;
-        const out_gdansk = pure_gdansk + c_gdansk;
-        const out_rivne = 850 + c_rivne;
-        const out_broker = 550 + c_broker;
-        const out_ins = pure_ins + c_ins;
-        const out_swift = pure_swift + c_swift;
-        const out_customs = customs;
-        const out_services = services;
-
-        const p1 = out_car_val + out_comm + out_ship + out_gdansk + out_rivne + out_broker + out_ins + out_swift;
-        const p2 = out_customs + out_services;
-
-        document.getElementById('out_chn_p1').innerText = Math.round(p1).toLocaleString() + ' $';
-        document.getElementById('out_chn_car_val').innerText = Math.round(out_car_val).toLocaleString() + ' $';
-        document.getElementById('out_chn_comm').innerText = Math.round(out_comm).toLocaleString() + ' $';
-        document.getElementById('out_chn_ship').innerText = Math.round(out_ship).toLocaleString() + ' $';
-        document.getElementById('out_chn_gdansk').innerText = Math.round(out_gdansk).toLocaleString() + ' $';
-        document.getElementById('out_chn_rivne').innerText = Math.round(out_rivne).toLocaleString() + ' $';
-        document.getElementById('out_chn_broker').innerText = Math.round(out_broker).toLocaleString() + ' $';
-        document.getElementById('out_chn_ins').innerText = Math.round(out_ins).toLocaleString() + ' $';
-        document.getElementById('out_chn_swift').innerText = Math.round(out_swift).toLocaleString() + ' $';
-        document.getElementById('out_chn_p2').innerText = Math.round(p2).toLocaleString() + ' $';
-        document.getElementById('out_chn_customs').innerText = Math.round(out_customs).toLocaleString() + ' $';
-        document.getElementById('out_chn_services').innerText = Math.round(out_services).toLocaleString() + ' $';
-
-        document.getElementById('total_chn').innerText = '$ ' + Math.round(p1 + p2).toLocaleString();
-    }
-
+    // Запускаємо первинний розрахунок при старті сторінки, щоб підтягнути дефолтні значення
     window.onload = function() {
-        calcUSA();
-        calcKorea();
-        calcChina();
+        calculateAll();
     };
 </script>
 
