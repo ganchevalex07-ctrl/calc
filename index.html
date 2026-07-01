@@ -69,17 +69,20 @@
             overflow: hidden;
         }
 
-        /* Стили для водяного знака ELVION (Выровнен на 1/4 от верха) */
+        /* Новый фоновый водяной знак-логотип ELVION (Заменил текст на твою PNG картинку) */
         .panel-outputs::before {
-            content: "ELVION";
+            content: "";
             position: absolute;
             top: 25%; /* Ровно на четверть от общей высоты раздела */
             left: 50%;
             transform: translate(-50%, -50%) rotate(-15deg);
-            font-size: 90px;
-            font-weight: 900;
-            letter-spacing: 6px;
-            color: rgba(255, 255, 255, 0.035); /* Тонкий, едва заметный цвет */
+            width: 320px; /* Оптимальная ширина для фонового логотипа */
+            height: 120px; /* Высота подгоняется под логотип */
+            background-image: url('logo_transparent.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            opacity: 0.04; /* Тонкий, едва заметный на черном фоне логотип */
             pointer-events: none;
             z-index: 0;
             user-select: none;
@@ -193,7 +196,7 @@
         @media (max-width: 1000px) {
             .calculator-grid { flex-direction: column; }
             .panel-inputs, .panel-outputs { min-width: 100%; }
-            .panel-outputs::before { font-size: 75px; top: 20%; } /* На смартфонах чуть повыше */
+            .panel-outputs::before { font-size: 75px; top: 20%; background-position: center top; } /* На смартфонах чуть адаптируем */
         }
     </style>
 </head>
@@ -201,7 +204,6 @@
 
 <div class="main-container">
 
-    <!-- ================= РАЗДЕЛ: США ================= -->
     <div class="country-section">
         <h1 class="country-title">США</h1>
         <div class="calculator-grid">
@@ -367,7 +369,6 @@
     </div>
 
 
-    <!-- ================= РАЗДЕЛ: КОРЕЯ ================= -->
     <div class="country-section">
         <h1 class="country-title">Корея</h1>
         <div class="calculator-grid">
@@ -551,7 +552,6 @@
     </div>
 
 
-    <!-- ================= РАЗДЕЛ: КИТАЙ ================= -->
     <div class="country-section">
         <h1 class="country-title">Китай</h1>
         <div class="calculator-grid">
