@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ELVION - Автокалькулятор 2.0 (США)</title>
+    <style>
+        :root {
+            --dark-bg: #1a1a1a;
+            --accent-blue: #00bcd4;
+            --text-white: #ffffff;
+            --input-bg: #2d2d2d;
+            --border-color: #333;
+            --readonly-blue: rgba(0, 188, 212, 0.15);
+            --readonly-red: rgba(244, 67, 54, 0.15);
+            --green-highlight: #4caf50;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--dark-bg);
+            color: var(--text-white);
+        }
+
+        .main-container {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .country-section {
+            background: #222222;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 40px;
+        }
+
+        .country-title {
+            color: var(--accent-blue);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 24px;
+            margin-top: 0;
+            margin-bottom: 25px;
+            border-bottom: 2px solid var(--accent-blue);
+            padding-bottom: 10px;
+        }
+
+        .calculator-grid {
+            display: flex;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+
+        .panel-inputs {
+            flex: 1.2;
+            min-width: 450px;
+        }
+
+        .panel-outputs {
+            flex: 1;
+            min-width: 400px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Водяной знак-логотип ELVION из корневой папки */
+        .panel-outputs::before {
+            content: "";
+            position: absolute;
+            top: 25%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-15deg);
+            width: 320px;
+            height: 120px;
+            background-image: url('logo_transparent.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            opacity: 0.06;
+            pointer-events: none;
+            z-index: 0;
+            user-select: none;
+        }
+
+        .header-row, .res-item, .total-row {
+            position: relative;
+            z-index: 1;
+        }
+
+        .input-row-flex {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 12px;
+            align-items: center;
+        }
+
+        .input-field-group {
+            flex: 1;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 4px;
+            font-size: 13px;
+            color: #bbb;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            background: var(--input-bg);
+            border: 1px solid #444;
+            border-radius: 5px;
+            color: white;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        input:focus, select:focus { border-color: var(--accent-blue); outline: none; }
+
+        .header-row {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: rgba(0, 188, 212, 0.05);
+            border: 2px solid var(--accent-blue);
+            border-radius: 8px;
+            text-align: center;
+        }
+        .res-car-title { font-size: 20px; font-weight: bold; color: var(--accent-blue); text-transform: uppercase; }
+        .res-vin-title { font-size: 13px; color: #fff; opacity: 0.8; letter-spacing: 1px; margin-top: 4px; display: block; }
+
+        .res-item {
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.07);
+        }
+        .res-row-data {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+        }
+        .res-label { color: #ccc; }
+        .res-value { font-weight: bold; color: #fff; }
+
+        .green-highlight-box {
+            border: 1px dashed var(--green-highlight);
+            background: rgba(76, 175, 80, 0.08);
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+        .green-highlight-box .res-label { color: #a5d6a7; }
+        .green-highlight-box .res-value { 
+            font-weight: 900; 
+            text-decoration: underline; 
+            color: #66bb6a;
+            font-size: 16px;
+        }
+
+        .total-row {
+            margin-top: 25px;
+            padding: 18px;
+            background: rgba(0, 188, 212, 0.12);
+            border: 2px solid var(--accent-blue);
+            border-radius: 8px;
+            text-align: center;
+        }
+        .total-label { display: block; font-size: 12px; margin-bottom: 5px; color: #ccc; text-transform: uppercase; letter-spacing: 1px; }
+        .total-amount { font-size: 28px; font-weight: bold; color: var(--accent-blue); }
+
+        @media (max-width: 1000px) {
+            .calculator-grid { flex-direction: column; }
+            .panel-inputs, .panel-outputs { min-width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="main-container">
+
+    <!-- ================= РАЗДЕЛ: США ================= -->
+    <div class="country-section">
+        <h1 class="country-title">США</h1>
+        <div class="calculator-grid">
+            
+            <!-- ЛЕВАЯ СТОРОНА: ВВОД ДАННЫХ -->
+            <div class="panel-inputs">
+                
+                <!-- 1. Назва авто + VIN -->
+                <div class="input-row-flex">
+                    <div class="input-field-group">
+                        <label>1. Назва авто</label>
+                        <input type="text" id="usa_name" placeholder="Наприклад: Ford Mustang" oninput="calcUSA()">
+                    </div>
+                    <div class="input-field-group">
+                        <label>1.1 VIN</label>
+                        <input type="text" id="usa_vin" placeholder="Номер кузова" oninput="calcUSA()">
+                    </div>
+                </div>
+
+                <!-- 2. Ставка на торги -->
+                <div class="input-row-flex">
+                    <div class="input-field-group">
+                        <label>2. Ставка на торги ($)</label>
+                        <input type="number" id="usa_bid" value="0" oninput="calcUSA()">
+                    </div>
+                </div>
+
+                <!-- 3. Аукціон -->
+                <div class="input-row-flex">
+                    <div class="input-field-group">
+                        <label>3. Аукціон</label>
+                        <select id="usa_auction" onchange="onAuctionChange()">
+                            <option value="Copart">Copart</option>
+                            <option value="IAAI">IAAI</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- 4. Локація -->
+                <div class="input-row-flex">
+                    <div class="input-field-group">
+                        <label>4. Локація (Штат / Місто)</label>
+                        <input type="text" id="usa_location" list="usa_locations_list" placeholder="Оберіть або введіть локацію..." oninput="calcUSA()">
+                        <datalist id="usa_locations_list"></datalist>
+                    </div>
+                </div>
+
+                <!-- 5. Тип кузова -->
+                <div class="input-row-flex">
+                    <div class="input-field-group">
+                        <label>5. Тип кузова</label>
+                        <select id="usa_body_type" onchange="calcUSA()">
+                            <option value="sedan">Седан</option>
+                            <option value="crossover">Кросовер</option>
+                            <option value="suv">Внедорожник/пикап/минивэн</option>
+                            <option value="moto">Мотоцикл</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- 6. Тип топлива -->
+                <div class="input-row-flex">
+                    <div class="input-field-group">
+                        <label>6. Тип топлива</label>
+                        <select id="usa_fuel_type" onchange="onFuelChange()">
+                            <option value="gasoline">Бензин</option>
+                            <option value="diesel">Дизель</option>
+                            <option value="electric">Электро</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- 7. Год производства -->
+                <div class="input-row-flex">
+                    <div class="input-field-group">
+                        <label>7. Рік виробництва</label>
+                        <input type="number" id="usa_year" value="2020" placeholder="2020" oninput="calcUSA()">
+                    </div>
+                </div>
+
+                <!-- 8. Объем двигателя / Батарея -->
+                <div class="input-row-flex">
+                    <div class="input-field-group">
+                        <label id="usa_engine_label">8. Об'єм двигуна (см³)</label>
+                        <input type="number" id="usa_engine_val" value="2000" placeholder="например: 2000" oninput="calcUSA()">
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- ПРАВАЯ СТОРОНА: ВЫВОД ДАННЫХ -->
+            <div class="panel-outputs">
+                <div class="header-row">
+                    <span class="res-car-title" id="res_usa_title">ELVION AUTO</span>
+                    <span class="res-vin-title" id="res_usa_vin_title"></span>
+                </div>
+
+                <div class="res-item green-highlight-box">
+                    <div class="res-row-data"><span class="res-label">Перший платіж:</span> <span id="out_usa_p1">0 $</span></div>
+                </div>
+                <div class="res-item"><div class="res-row-data"><span class="res-label">Вартість авто:</span> <span id="out_usa_car_val">0 $</span></div></div>
+                <div class="res-item"><div class="res-row-data"><span class="res-label">Аукціонний збір:</span> <span id="out_usa_auc">0 $</span></div></div>
+                <div class="res-item"><div class="res-row-data"><span class="res-label">Доставка по США:</span> <span id="out_usa_ship">0 $</span></div></div>
+                <div class="res-item"><div class="res-row-data"><span class="res-label">США - Гданськ:</span> <span id="out_usa_gdansk">0 $</span></div></div>
+                <div class="res-item"><div class="res-row-data"><span class="res-label">Гданськ - Рівне:</span> <span id="out_usa_rivne">950 $</span></div></div>
+                <div class="res-item"><div class="res-row-data"><span class="res-label">Брокер/Експедитор:</span> <span id="out_usa_broker">700 $</span></div></div>
+                <div class="res-item"><div class="res-row-data"><span class="res-label">Страхування:</span> <span id="out_usa_ins">0 $</span></div></div>
+                <div class="res-item"><div class="res-row-data"><span class="res-label">Комісія за SWIFT переказ:</span> <span id="out_usa_swift">0 $</span></div></div>
+                
+                <div class="res-item green-highlight-box" style="margin-top: 5px;">
+                    <div class="res-row-data"><span class="res-label">Другий платіж:</span> <span id="out_usa_p2">0 $</span></div>
+                </div>
+                <div class="res-item"><div class="res-row-data"><span class="res-label">Митні платежі:</span> <span id="out_usa_customs">0 $</span></div></div>
+                <div class="res-item"><div class="res-row-data"><span class="res-label">Послуги компанії:</span> <span id="out_usa_services">500 $</span></div></div>
+
+                <div class="total-row">
+                    <span class="total-label">Вартість авто з розмитненням:</span>
+                    <span class="total-amount" id="total_usa">$ 0</span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+<script>
+    // ================= БАЗА ДАННЫХ ЛОГИСТИКИ США (Из таблицы "Логистика США") =================
+    const logisticsUSA = {
+        "Copart": {
+            "AL - BIRMINGHAM": { land: 375, ocean: 1600 },
+            "AL - DOTHAN": { land: 425, ocean: 1600 },
+            "AL - MONTGOMERY": { land: 375, ocean: 1600 },
+            "AL - MOBILE": { land: 450, ocean: 1600 },
+            "AR - FAYETTEVILLE": { land: 550, ocean: 1600 },
+            "AR - LITTLE ROCK": { land: 500, ocean: 1600 },
+            "AZ - PHENIX": { land: 400, ocean: 1800 },
+            "AZ - TUCSON": { land: 450, ocean: 1800 },
+            "CA - BAKERSFIELD": { land: 300, ocean: 1800 },
+            "CA - FRESNO": { land: 300, ocean: 1800 },
+            "CA - LOS ANGELES": { land: 250, ocean: 1800 },
+            "CA - SACRAMENTO": { land: 300, ocean: 1800 },
+            "CA - SAN DIEGO": { land: 300, ocean: 1800 },
+            "FL - JACKSONVILLE": { land: 250, ocean: 1550 },
+            "FL - MIAMI": { land: 300, ocean: 1550 },
+            "FL - ORLANDO": { land: 275, ocean: 1550 },
+            "FL - TAMPA": { land: 300, ocean: 1550 },
+            "GA - ATLANTA": { land: 300, ocean: 1600 },
+            "GA - SAVANNAH": { land: 250, ocean: 1600 },
+            "IL - CHICAGO": { land: 450, ocean: 1650 },
+            "NJ - TRENTON": { land: 250, ocean: 1450 },
+            "NY - SYRACUSE": { land: 350, ocean: 1450 },
+            "TX - DALLAS": { land: 400, ocean: 1650 },
+            "TX - HOUSTON": { land: 300, ocean: 1650 }
+        },
+        "IAAI": {
+            "AL - BIRMINGHAM": { land: 375, ocean: 1600 },
+            "AL - DOTHAN": { land: 425, ocean: 1600 },
+            "AL - HUNTSVILLE": { land: 400, ocean: 1600 },
+            "AL - MOBILE": { land: 450, ocean: 1600 },
+            "AZ - PHENIX": { land: 400, ocean: 1800 },
+            "CA - LOS ANGELES": { land: 250, ocean: 1800 },
+            "CA - SACRAMENTO": { land: 300, ocean: 1800 },
+            "FL - JACKSONVILLE": { land: 250, ocean: 1550 },
+            "FL - MIAMI": { land: 300, ocean: 1550 },
+            "GA - ATLANTA": { land: 300, ocean: 1600 },
+            "IL - CHICAGO": { land: 450, ocean: 1650 },
+            "NJ - EVENING": { land: 250, ocean: 1450 },
+            "TX - DALLAS": { land: 400, ocean: 1650 },
+            "TX - HOUSTON": { land: 300, ocean: 1650 }
+        }
+    };
+
+    // ================= ВЫЧИСЛЕНИЕ АУКЦИОННЫХ СБОРОВ =================
+    function getCopartFee(bid) {
+        if (bid <= 0) return 0;
+        let tierFee = 0;
+        if (bid < 50) tierFee = 1;
+        else if (bid < 100) tierFee = 25;
+        else if (bid < 200) tierFee = 50;
+        else if (bid < 300) tierFee = 75;
+        else if (bid < 400) tierFee = 110;
+        else if (bid < 500) tierFee = 125;
+        else if (bid < 550) tierFee = 130;
+        else if (bid < 600) tierFee = 140;
+        else if (bid < 700) tierFee = 155;
+        else if (bid < 800) tierFee = 170;
+        else if (bid < 900) tierFee = 185;
+        else if (bid < 1000) tierFee = 200;
+        else if (bid < 1200) tierFee = 225;
+        else if (bid < 1300) tierFee = 240;
+        else if (bid < 1400) tierFee = 255;
+        else if (bid < 1500) tierFee = 270;
+        else if (bid < 1600) tierFee = 290;
+        else if (bid < 1700) tierFee = 300;
+        else if (bid < 1800) tierFee = 310;
+        else if (bid < 1900) tierFee = 325;
+        else if (bid < 2000) tierFee = 340;
+        else if (bid < 2400) tierFee = 365;
+        else if (bid < 2500) tierFee = 390;
+        else if (bid < 3000) tierFee = 440;
+        else if (bid < 3500) tierFee = 490;
+        else if (bid < 4000) tierFee = 550;
+        else if (bid < 4500) tierFee = 600;
+        else if (bid < 5000) tierFee = 650;
+        else if (bid < 6000) tierFee = 700;
+        else if (bid < 7500) tierFee = 750;
+        else if (bid < 10000) tierFee = 800;
+        else tierFee = bid * 0.07;
+
+        let internetFee = 0;
+        if (bid < 100) internetFee = 0;
+        else if (bid < 500) internetFee = 39;
+        else if (bid < 1000) internetFee = 49;
+        else if (bid < 1500) internetFee = 69;
+        else if (bid < 2000) internetFee = 79;
+        else if (bid < 4000) internetFee = 89;
+        else if (bid < 6000) internetFee = 99;
+        else internetFee = 119;
+
+        return tierFee + internetFee + 150;
+    }
+
+    function getIAAIFee(bid) {
+        if (bid <= 0) return 0;
+        let tierFee = 0;
+        if (bid < 100) tierFee = 25;
+        else if (bid < 200) tierFee = 40;
+        else if (bid < 300) tierFee = 60;
+        else if (bid < 400) tierFee = 80;
+        else if (bid < 500) tierFee = 100;
+        else if (bid < 600) tierFee = 120;
+        else if (bid < 700) tierFee = 140;
+        else if (bid < 800) tierFee = 160;
+        else if (bid < 900) tierFee = 180;
+        else if (bid < 1000) tierFee = 200;
+        else if (bid < 1200) tierFee = 225;
+        else if (bid < 1500) tierFee = 265;
+        else if (bid < 2000) tierFee = 330;
+        else if (bid < 2500) tierFee = 390;
+        else if (bid < 3000) tierFee = 450;
+        else if (bid < 4000) tierFee = 530;
+        else if (bid < 5000) tierFee = 600;
+        else if (bid < 7500) tierFee = 700;
+        else tierFee = bid * 0.075;
+
+        let internetFee = 0;
+        if (bid < 500) internetFee = 35;
+        else if (bid < 1000) internetFee = 50;
+        else if (bid < 2000) internetFee = 75;
+        else if (bid < 4000) internetFee = 90;
+        else internetFee = 110;
+
+        return tierFee + internetFee + 160;
+    }
+
+    // ================= ДИНАМИЧЕСКИЙ ВЫБОР ИНТЕРФЕЙСА =================
+    function onAuctionChange() {
+        const auction = document.getElementById('usa_auction').value;
+        const datalist = document.getElementById('usa_locations_list');
+        datalist.innerHTML = '';
+        
+        const locs = logisticsUSA[auction] || {};
+        for (let city in locs) {
+            let option = document.createElement('option');
+            option.value = city;
+            datalist.appendChild(option);
+        }
+        calcUSA();
+    }
+
+    function onFuelChange() {
+        const fuel = document.getElementById('usa_fuel_type').value;
+        const label = document.getElementById('usa_engine_label');
+        const input = document.getElementById('usa_engine_val');
+
+        if (fuel === 'electric') {
+            label.innerText = "8. Розмір батареї (кВт⋅год)";
+            input.placeholder = "например: 75";
+        } else {
+            label.innerText = "8. Об'єм двигуна (см³)";
+            input.placeholder = "например: 2000";
+        }
+        calcUSA();
+    }
+
+    // ================= ГЛАВНЫЙ РАСЧЕТ ДЛЯ США =================
+    function calcUSA() {
+        const name = document.getElementById('usa_name').value || "ELVION AUTO";
+        const vin = document.getElementById('usa_vin').value;
+        document.getElementById('res_usa_title').innerText = name;
+        document.getElementById('res_usa_vin_title').innerText = vin ? 'VIN: ' + vin : '';
+
+        // Входные данные
+        const bid = parseFloat(document.getElementById('usa_bid').value) || 0;
+        const auction = document.getElementById('usa_auction').value;
+        const location = document.getElementById('usa_location').value.trim();
+        const bodyType = document.getElementById('usa_body_type').value;
+        const fuelType = document.getElementById('usa_fuel_type').value;
+        const year = parseInt(document.getElementById('usa_year').value) || 2020;
+        const engineVal = parseFloat(document.getElementById('usa_engine_val').value) || 0;
+
+        // 1. Стоимость авто
+        const carVal = bid;
+
+        // 2. Аукционный сбор
+        let aucFee = (auction === "Copart") ? getCopartFee(bid) : getIAAIFee(bid);
+
+        // 3. Доставка по США (Суша)
+        let locData = (logisticsUSA[auction] && logisticsUSA[auction][location]) ? logisticsUSA[auction][location] : { land: 350, ocean: 1600 };
+        let shipUSA = locData.land;
+        if (bodyType === 'suv') shipUSA += 100;
+
+        // 4. США - Гданьск (Морской фрахт)
+        let baseOcean = locData.ocean;
+        let shipOcean = 0;
+        if (bodyType === 'sedan') shipOcean = baseOcean - 450;
+        else if (bodyType === 'crossover') shipOcean = baseOcean - 350;
+        else if (bodyType === 'suv') shipOcean = (baseOcean - 450) * 2;
+        else if (bodyType === 'moto') shipOcean = baseOcean - 870;
+
+        // 5. Гданьск - Ровно
+        let rivneShip = (bodyType === 'moto') ? 650 : 950;
+
+        // 6. Брокер / Экспедитор
+        let brokerFee = 700;
+
+        // 7. Страховка
+        let insurance = (carVal + aucFee) * 0.025 + 150;
+
+        // 8. Комиссия за SWIFT перевод
+        let swiftFee = (carVal + aucFee + locData.land + baseOcean + 100) * 0.01 + 175;
+
+        // 9. Таможенные платежи
+        let customsTotal = 0;
+        let duty = 0;
+        let excise = 0;
+        let vat = 0;
+
+        if (fuelType === 'electric') {
+            // Электромобили
+            duty = 0;
+            excise = engineVal; // 1 евро за 1 кВт батареи
+            vat = (carVal + aucFee + 1950 + (excise * 1.15)) * 0.2;
+            customsTotal = vat + (excise * 1.15) + 30;
+        } else {
+            // ДВС (Бензин / Дизель)
+            duty = (carVal + aucFee + 1950) * 0.1;
+            
+            let ageCoeff = 2026 - year - 1;
+            if (ageCoeff < 1) ageCoeff = 1;
+            if (ageCoeff > 15) ageCoeff = 15;
+
+            if (fuelType === 'gasoline') {
+                let baseRate = (engineVal <= 3000) ? 50 : 100;
+                excise = baseRate * (engineVal / 1000) * ageCoeff;
+            } else if (fuelType === 'diesel') {
+                let baseRate = (engineVal <= 3500) ? 75 : 150;
+                excise = baseRate * (engineVal / 1000) * ageCoeff;
+            }
+
+            vat = (carVal + aucFee + 1950 + duty + (excise * 1.15)) * 0.2;
+            customsTotal = vat + duty + (excise * 1.15) + 30;
+        }
+
+        // 10. Услуги компании
+        let servicesFee = 500;
+
+        // Подсчет платежей
+        let p1 = carVal + aucFee + shipUSA + shipOcean + rivneShip + brokerFee + insurance + swiftFee;
+        let p2 = customsTotal + servicesFee;
+        let totalVal = p1 + p2;
+
+        // Вывод данных
+        document.getElementById('out_usa_car_val').innerText = Math.round(carVal).toLocaleString() + ' $';
+        document.getElementById('out_usa_auc').innerText = Math.round(aucFee).toLocaleString() + ' $';
+        document.getElementById('out_usa_ship').innerText = Math.round(shipUSA).toLocaleString() + ' $';
+        document.getElementById('out_usa_gdansk').innerText = Math.round(shipOcean).toLocaleString() + ' $';
+        document.getElementById('out_usa_rivne').innerText = Math.round(rivneShip).toLocaleString() + ' $';
+        document.getElementById('out_usa_broker').innerText = Math.round(brokerFee).toLocaleString() + ' $';
+        document.getElementById('out_usa_ins').innerText = Math.round(insurance).toLocaleString() + ' $';
+        document.getElementById('out_usa_swift').innerText = Math.round(swiftFee).toLocaleString() + ' $';
+        document.getElementById('out_usa_p1').innerText = Math.round(p1).toLocaleString() + ' $';
+        
+        document.getElementById('out_usa_customs').innerText = Math.round(customsTotal).toLocaleString() + ' $';
+        document.getElementById('out_usa_services').innerText = Math.round(servicesFee).toLocaleString() + ' $';
+        document.getElementById('out_usa_p2').innerText = Math.round(p2).toLocaleString() + ' $';
+
+        document.getElementById('total_usa').innerText = '$ ' + Math.round(totalVal).toLocaleString();
+    }
+
+    // Инициализация при загрузке
+    window.onload = function() {
+        onAuctionChange();
+    };
+</script>
+
+</body>
+</html>
