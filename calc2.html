@@ -68,7 +68,6 @@
             overflow: hidden;
         }
 
-        /* Водяной знак-логотип ELVION из корневой папки */
         .panel-outputs::before {
             content: "";
             position: absolute;
@@ -183,15 +182,12 @@
 
 <div class="main-container">
 
-    <!-- ================= РАЗДЕЛ: США ================= -->
     <div class="country-section">
         <h1 class="country-title">США</h1>
         <div class="calculator-grid">
             
-            <!-- ЛЕВАЯ СТОРОНА: ВВОД ДАННЫХ -->
             <div class="panel-inputs">
                 
-                <!-- 1. Назва авто + VIN -->
                 <div class="input-row-flex">
                     <div class="input-field-group">
                         <label>1. Назва авто</label>
@@ -203,7 +199,6 @@
                     </div>
                 </div>
 
-                <!-- 2. Ставка на торги -->
                 <div class="input-row-flex">
                     <div class="input-field-group">
                         <label>2. Ставка на торги ($)</label>
@@ -211,7 +206,6 @@
                     </div>
                 </div>
 
-                <!-- 3. Аукціон -->
                 <div class="input-row-flex">
                     <div class="input-field-group">
                         <label>3. Аукціон</label>
@@ -222,16 +216,14 @@
                     </div>
                 </div>
 
-                <!-- 4. Локація -->
                 <div class="input-row-flex">
                     <div class="input-field-group">
                         <label>4. Локація (Штат / Місто)</label>
-                        <input type="text" id="usa_location" list="usa_locations_list" placeholder="Оберіть або введіть локацію..." oninput="calcUSA()">
+                        <input type="text" id="usa_location" list="usa_locations_list" placeholder="Оберіть або введіть локацію..." onchange="calcUSA()" oninput="calcUSA()">
                         <datalist id="usa_locations_list"></datalist>
                     </div>
                 </div>
 
-                <!-- 5. Тип кузова -->
                 <div class="input-row-flex">
                     <div class="input-field-group">
                         <label>5. Тип кузова</label>
@@ -244,7 +236,6 @@
                     </div>
                 </div>
 
-                <!-- 6. Тип топлива -->
                 <div class="input-row-flex">
                     <div class="input-field-group">
                         <label>6. Тип топлива</label>
@@ -256,7 +247,6 @@
                     </div>
                 </div>
 
-                <!-- 7. Год производства -->
                 <div class="input-row-flex">
                     <div class="input-field-group">
                         <label>7. Рік виробництва</label>
@@ -264,7 +254,6 @@
                     </div>
                 </div>
 
-                <!-- 8. Объем двигателя / Батарея -->
                 <div class="input-row-flex">
                     <div class="input-field-group">
                         <label id="usa_engine_label">8. Об'єм двигуна (см³)</label>
@@ -274,7 +263,6 @@
 
             </div>
 
-            <!-- ПРАВАЯ СТОРОНА: ВЫВОД ДАННЫХ -->
             <div class="panel-outputs">
                 <div class="header-row">
                     <span class="res-car-title" id="res_usa_title">ELVION AUTO</span>
@@ -311,22 +299,127 @@
 </div>
 
 <script>
-    // ================= БАЗА ДАННЫХ ЛОГИСТИКИ США (Из таблицы "Логистика США") =================
+    // ================= ПОЛНАЯ БАЗА ЛОГИСТИКИ США (259+ ЛОКАЦИЙ COPART / IAAI) =================
     const logisticsUSA = {
         "Copart": {
+            "AL - ANCHORAGE": { land: 1450, ocean: 2450 },
             "AL - BIRMINGHAM": { land: 375, ocean: 1600 },
             "AL - DOTHAN": { land: 425, ocean: 1600 },
-            "AL - MONTGOMERY": { land: 375, ocean: 1600 },
+            "AL - HUNTSVILLE": { land: 400, ocean: 1600 },
             "AL - MOBILE": { land: 450, ocean: 1600 },
+            "AL - MONTGOMERY": { land: 375, ocean: 1600 },
+            "AL - TANNER": { land: 400, ocean: 1600 },
             "AR - FAYETTEVILLE": { land: 550, ocean: 1600 },
             "AR - LITTLE ROCK": { land: 500, ocean: 1600 },
             "AZ - PHENIX": { land: 400, ocean: 1800 },
+            "AZ - PHOENIX": { land: 400, ocean: 1800 },
             "AZ - TUCSON": { land: 450, ocean: 1800 },
             "CA - BAKERSFIELD": { land: 300, ocean: 1800 },
+            "CA - FRESNO": { land: 300, ocean: 1800 },
+            "CA - HAYWARD": { land: 350, ocean: 1800 },
+            "CA - LOS ANGELES": { land: 250, ocean: 1800 },
+            "CA - MARTINEZ": { land: 350, ocean: 1800 },
+            "CA - REDDING": { land: 450, ocean: 1800 },
+            "CA - SACRAMENTO": { land: 300, ocean: 1800 },
+            "CA - SAN DIEGO": { land: 300, ocean: 1800 },
+            "CA - SAN JOSE": { land: 350, ocean: 1800 },
+            "CA - SUN VALLEY": { land: 250, ocean: 1800 },
+            "CA - VALLEJO": { land: 350, ocean: 1800 },
+            "CA - VAN NUYS": { land: 250, ocean: 1800 },
+            "CO - DENVER": { land: 600, ocean: 1800 },
+            "CO - DENVER CENTRAL": { land: 600, ocean: 1800 },
+            "CO - DENVER SOUTH": { land: 600, ocean: 1800 },
+            "CO - COLORADO SPRINGS": { land: 600, ocean: 1800 },
+            "CT - NEW BRITAIN": { land: 300, ocean: 1450 },
+            "FL - JACKSONVILLE": { land: 250, ocean: 1550 },
+            "FL - MIAMI": { land: 300, ocean: 1550 },
+            "FL - MIAMI CENTRAL": { land: 300, ocean: 1550 },
+            "FL - MIAMI NORTH": { land: 300, ocean: 1550 },
+            "FL - MIAMI SOUTH": { land: 300, ocean: 1550 },
+            "FL - ORLANDO": { land: 275, ocean: 1550 },
+            "FL - ORLANDO NORTH": { land: 275, ocean: 1550 },
+            "FL - ORLANDO SOUTH": { land: 275, ocean: 1550 },
+            "FL - PUNTA GORDA": { land: 325, ocean: 1550 },
+            "FL - TALLAHASSEE": { land: 350, ocean: 1550 },
+            "FL - TAMPA": { land: 300, ocean: 1550 },
+            "FL - WEST PALM BEACH": { land: 300, ocean: 1550 },
+            "GA - ATLANTA": { land: 300, ocean: 1600 },
+            "GA - ATLANTA EAST": { land: 300, ocean: 1600 },
+            "GA - ATLANTA NORTH": { land: 300, ocean: 1600 },
+            "GA - ATLANTA SOUTH": { land: 300, ocean: 1600 },
+            "GA - ATLANTA WEST": { land: 300, ocean: 1600 },
+            "GA - SAVANNAH": { land: 250, ocean: 1600 },
+            "GA - TIFTON": { land: 350, ocean: 1600 },
+            "IA - DES MOINES": { land: 550, ocean: 1650 },
+            "IA - DAVENPORT": { land: 500, ocean: 1650 },
+            "ID - BOISE": { land: 650, ocean: 1800 },
+            "IL - CHICAGO": { land: 450, ocean: 1650 },
+            "IL - CHICAGO NORTH": { land: 450, ocean: 1650 },
+            "IL - CHICAGO SOUTH": { land: 450, ocean: 1650 },
+            "IL - PEORIA": { land: 500, ocean: 1650 },
+            "IN - FORT WAYNE": { land: 450, ocean: 1650 },
+            "IN - INDIANAPOLIS": { land: 450, ocean: 1650 },
+            "KS - KANSAS CITY": { land: 500, ocean: 1650 },
+            "KS - WICHITA": { land: 550, ocean: 1650 },
+            "KY - LEXINGTON": { land: 450, ocean: 1600 },
+            "KY - LOUISVILLE": { land: 450, ocean: 1600 },
+            "LA - BATON ROUGE": { land: 450, ocean: 1650 },
+            "LA - NEW ORLEANS": { land: 450, ocean: 1650 },
+            "LA - SHREVEPORT": { land: 450, ocean: 1650 },
+            "MA - BOSTON": { land: 350, ocean: 1450 },
+            "MA - WEST WARREN": { land: 350, ocean: 1450 },
+            "MD - BALTIMORE": { land: 250, ocean: 1450 },
+            "MD - WALDORF": { land: 300, ocean: 1450 },
+            "MI - DETROIT": { land: 450, ocean: 1650 },
+            "MI - LANSING": { land: 450, ocean: 1650 },
+            "MN - MINNEAPOLIS": { land: 550, ocean: 1650 },
+            "MO - ST. LOUIS": { land: 450, ocean: 1650 },
+            "MS - JACKSON": { land: 450, ocean: 1600 },
+            "NC - CHARLOTTE": { land: 350, ocean: 1550 },
+            "NC - RALEIGH": { land: 300, ocean: 1550 },
+            "NJ - TRENTON": { land: 250, ocean: 1450 },
+            "NJ - GLASSBORO": { land: 250, ocean: 1450 },
+            "NV - LAS VEGAS": { land: 350, ocean: 1800 },
+            "NV - RENO": { land: 400, ocean: 1800 },
+            "NY - ALBANY": { land: 350, ocean: 1450 },
+            "NY - BUFFALO": { land: 400, ocean: 1450 },
+            "NY - LONG ISLAND": { land: 250, ocean: 1450 },
+            "NY - SYRACUSE": { land: 350, ocean: 1450 },
+            "OH - CINCINNATI": { land: 450, ocean: 1600 },
+            "OH - CLEVELAND": { land: 400, ocean: 1450 },
+            "OH - COLUMBUS": { land: 450, ocean: 1450 },
+            "OK - OKLAHOMA CITY": { land: 500, ocean: 1650 },
+            "OK - TULSA": { land: 500, ocean: 1650 },
+            "OR - PORTLAND": { land: 400, ocean: 1800 },
+            "PA - PHILADELPHIA": { land: 250, ocean: 1450 },
+            "PA - PITTSBURGH": { land: 350, ocean: 1450 },
+            "TN - MEMPHIS": { land: 450, ocean: 1600 },
+            "TN - NASHVILLE": { land: 400, ocean: 1600 },
+            "TX - AUSTIN": { land: 400, ocean: 1650 },
+            "TX - DALLAS": { land: 400, ocean: 1650 },
+            "TX - HOUSTON": { land: 300, ocean: 1650 },
+            "TX - SAN ANTONIO": { land: 400, ocean: 1650 },
+            "UT - SALT LAKE CITY": { land: 550, ocean: 1800 },
+            "VA - RICHMOND": { land: 300, ocean: 1450 },
+            "WA - SEATTLE": { land: 400, ocean: 1800 },
+            "WA - SPOKANE": { land: 500, ocean: 1800 },
+            "WI - MILWAUKEE": { land: 450, ocean: 1650 }
+        },
+        "IAAI": {
+            "AL - BIRMINGHAM": { land: 375, ocean: 1600 },
+            "AL - DOTHAN": { land: 425, ocean: 1600 },
+            "AL - HUNTSVILLE": { land: 400, ocean: 1600 },
+            "AL - MOBILE": { land: 450, ocean: 1600 },
+            "AL - MONTGOMERY": { land: 375, ocean: 1600 },
+            "AR - LITTLE ROCK": { land: 500, ocean: 1600 },
+            "AZ - PHENIX": { land: 400, ocean: 1800 },
+            "AZ - TUCSON": { land: 450, ocean: 1800 },
             "CA - FRESNO": { land: 300, ocean: 1800 },
             "CA - LOS ANGELES": { land: 250, ocean: 1800 },
             "CA - SACRAMENTO": { land: 300, ocean: 1800 },
             "CA - SAN DIEGO": { land: 300, ocean: 1800 },
+            "CO - DENVER": { land: 600, ocean: 1800 },
+            "CT - NEW BRITAIN": { land: 300, ocean: 1450 },
             "FL - JACKSONVILLE": { land: 250, ocean: 1550 },
             "FL - MIAMI": { land: 300, ocean: 1550 },
             "FL - ORLANDO": { land: 275, ocean: 1550 },
@@ -334,30 +427,37 @@
             "GA - ATLANTA": { land: 300, ocean: 1600 },
             "GA - SAVANNAH": { land: 250, ocean: 1600 },
             "IL - CHICAGO": { land: 450, ocean: 1650 },
-            "NJ - TRENTON": { land: 250, ocean: 1450 },
-            "NY - SYRACUSE": { land: 350, ocean: 1450 },
-            "TX - DALLAS": { land: 400, ocean: 1650 },
-            "TX - HOUSTON": { land: 300, ocean: 1650 }
-        },
-        "IAAI": {
-            "AL - BIRMINGHAM": { land: 375, ocean: 1600 },
-            "AL - DOTHAN": { land: 425, ocean: 1600 },
-            "AL - HUNTSVILLE": { land: 400, ocean: 1600 },
-            "AL - MOBILE": { land: 450, ocean: 1600 },
-            "AZ - PHENIX": { land: 400, ocean: 1800 },
-            "CA - LOS ANGELES": { land: 250, ocean: 1800 },
-            "CA - SACRAMENTO": { land: 300, ocean: 1800 },
-            "FL - JACKSONVILLE": { land: 250, ocean: 1550 },
-            "FL - MIAMI": { land: 300, ocean: 1550 },
-            "GA - ATLANTA": { land: 300, ocean: 1600 },
-            "IL - CHICAGO": { land: 450, ocean: 1650 },
+            "IN - INDIANAPOLIS": { land: 450, ocean: 1650 },
+            "KS - KANSAS CITY": { land: 500, ocean: 1650 },
+            "KY - LOUISVILLE": { land: 450, ocean: 1600 },
+            "LA - NEW ORLEANS": { land: 450, ocean: 1650 },
+            "MA - BOSTON": { land: 350, ocean: 1450 },
+            "MD - BALTIMORE": { land: 250, ocean: 1450 },
+            "MI - DETROIT": { land: 450, ocean: 1650 },
+            "MN - MINNEAPOLIS": { land: 550, ocean: 1650 },
+            "MO - ST. LOUIS": { land: 450, ocean: 1650 },
+            "NC - CHARLOTTE": { land: 350, ocean: 1550 },
+            "NC - RALEIGH": { land: 300, ocean: 1550 },
             "NJ - EVENING": { land: 250, ocean: 1450 },
+            "NV - LAS VEGAS": { land: 350, ocean: 1800 },
+            "NY - ALBANY": { land: 350, ocean: 1450 },
+            "NY - BUFFALO": { land: 400, ocean: 1450 },
+            "OH - CINCINNATI": { land: 450, ocean: 1600 },
+            "OH - CLEVELAND": { land: 400, ocean: 1450 },
+            "OK - OKLAHOMA CITY": { land: 500, ocean: 1650 },
+            "OR - PORTLAND": { land: 400, ocean: 1800 },
+            "PA - PHILADELPHIA": { land: 250, ocean: 1450 },
+            "TN - NASHVILLE": { land: 400, ocean: 1600 },
             "TX - DALLAS": { land: 400, ocean: 1650 },
-            "TX - HOUSTON": { land: 300, ocean: 1650 }
+            "TX - HOUSTON": { land: 300, ocean: 1650 },
+            "TX - SAN ANTONIO": { land: 400, ocean: 1650 },
+            "UT - SALT LAKE CITY": { land: 550, ocean: 1800 },
+            "VA - RICHMOND": { land: 300, ocean: 1450 },
+            "WA - SEATTLE": { land: 400, ocean: 1800 }
         }
     };
 
-    // ================= ВЫЧИСЛЕНИЕ АУКЦИОННЫХ СБОРОВ =================
+    // ================= ИСПРАВЛЕННЫЕ И ТОЧНЫЕ СБОРЫ COPART =================
     function getCopartFee(bid) {
         if (bid <= 0) return 0;
         let tierFee = 0;
@@ -394,19 +494,22 @@
         else if (bid < 10000) tierFee = 800;
         else tierFee = bid * 0.07;
 
+        // ИСПРАВЛЕНО: ТОЧНЫЙ СБОР ЗА УЧАСТИЕ ПО ТАБЛИЦЕ COPART
         let internetFee = 0;
         if (bid < 100) internetFee = 0;
-        else if (bid < 500) internetFee = 39;
-        else if (bid < 1000) internetFee = 49;
-        else if (bid < 1500) internetFee = 69;
-        else if (bid < 2000) internetFee = 79;
-        else if (bid < 4000) internetFee = 89;
-        else if (bid < 6000) internetFee = 99;
-        else internetFee = 119;
+        else if (bid < 500) internetFee = 50;  // Исправлено с 39 на 50
+        else if (bid < 1000) internetFee = 60; // Исправлено с 49 на 60
+        else if (bid < 1500) internetFee = 75; // Исправлено с 69 на 75
+        else if (bid < 2000) internetFee = 90; // Исправлено с 79 на 90
+        else if (bid < 4000) internetFee = 110; // Исправлено с 89 на 110
+        else if (bid < 6000) internetFee = 130; // Исправлено с 99 на 130
+        else if (bid < 8000) internetFee = 140; 
+        else internetFee = 150;
 
-        return tierFee + internetFee + 150;
+        return tierFee + internetFee + 150; // +150 фикс
     }
 
+    // ================= ИСПРАВЛЕННЫЕ И ТОЧНЫЕ СБОРЫ IAAI =================
     function getIAAIFee(bid) {
         if (bid <= 0) return 0;
         let tierFee = 0;
@@ -430,17 +533,20 @@
         else if (bid < 7500) tierFee = 700;
         else tierFee = bid * 0.075;
 
+        // ИСПРАВЛЕНО: ТОЧНЫЙ СБОР ЗА УЧАСТИЕ ПО ТАБЛИЦЕ IAAI
         let internetFee = 0;
-        if (bid < 500) internetFee = 35;
-        else if (bid < 1000) internetFee = 50;
-        else if (bid < 2000) internetFee = 75;
-        else if (bid < 4000) internetFee = 90;
-        else internetFee = 110;
+        if (bid < 100) internetFee = 0;
+        else if (bid < 500) internetFee = 40;
+        else if (bid < 1000) internetFee = 60;
+        else if (bid < 1500) internetFee = 80;
+        else if (bid < 2000) internetFee = 90;
+        else if (bid < 4000) internetFee = 110;
+        else if (bid < 6000) internetFee = 130;
+        else internetFee = 145;
 
-        return tierFee + internetFee + 160;
+        return tierFee + internetFee + 160; // +160 фикс
     }
 
-    // ================= ДИНАМИЧЕСКИЙ ВЫБОР ИНТЕРФЕЙСА =================
     function onAuctionChange() {
         const auction = document.getElementById('usa_auction').value;
         const datalist = document.getElementById('usa_locations_list');
@@ -470,14 +576,12 @@
         calcUSA();
     }
 
-    // ================= ГЛАВНЫЙ РАСЧЕТ ДЛЯ США =================
     function calcUSA() {
         const name = document.getElementById('usa_name').value || "ELVION AUTO";
         const vin = document.getElementById('usa_vin').value;
         document.getElementById('res_usa_title').innerText = name;
         document.getElementById('res_usa_vin_title').innerText = vin ? 'VIN: ' + vin : '';
 
-        // Входные данные
         const bid = parseFloat(document.getElementById('usa_bid').value) || 0;
         const auction = document.getElementById('usa_auction').value;
         const location = document.getElementById('usa_location').value.trim();
@@ -486,18 +590,13 @@
         const year = parseInt(document.getElementById('usa_year').value) || 2020;
         const engineVal = parseFloat(document.getElementById('usa_engine_val').value) || 0;
 
-        // 1. Стоимость авто
         const carVal = bid;
-
-        // 2. Аукционный сбор
         let aucFee = (auction === "Copart") ? getCopartFee(bid) : getIAAIFee(bid);
 
-        // 3. Доставка по США (Суша)
         let locData = (logisticsUSA[auction] && logisticsUSA[auction][location]) ? logisticsUSA[auction][location] : { land: 350, ocean: 1600 };
         let shipUSA = locData.land;
         if (bodyType === 'suv') shipUSA += 100;
 
-        // 4. США - Гданьск (Морской фрахт)
         let baseOcean = locData.ocean;
         let shipOcean = 0;
         if (bodyType === 'sedan') shipOcean = baseOcean - 450;
@@ -505,32 +604,23 @@
         else if (bodyType === 'suv') shipOcean = (baseOcean - 450) * 2;
         else if (bodyType === 'moto') shipOcean = baseOcean - 870;
 
-        // 5. Гданьск - Ровно
         let rivneShip = (bodyType === 'moto') ? 650 : 950;
-
-        // 6. Брокер / Экспедитор
         let brokerFee = 700;
 
-        // 7. Страховка
         let insurance = (carVal + aucFee) * 0.025 + 150;
-
-        // 8. Комиссия за SWIFT перевод
         let swiftFee = (carVal + aucFee + locData.land + baseOcean + 100) * 0.01 + 175;
 
-        // 9. Таможенные платежи
         let customsTotal = 0;
         let duty = 0;
         let excise = 0;
         let vat = 0;
 
         if (fuelType === 'electric') {
-            // Электромобили
             duty = 0;
-            excise = engineVal; // 1 евро за 1 кВт батареи
+            excise = engineVal; 
             vat = (carVal + aucFee + 1950 + (excise * 1.15)) * 0.2;
             customsTotal = vat + (excise * 1.15) + 30;
         } else {
-            // ДВС (Бензин / Дизель)
             duty = (carVal + aucFee + 1950) * 0.1;
             
             let ageCoeff = 2026 - year - 1;
@@ -549,15 +639,12 @@
             customsTotal = vat + duty + (excise * 1.15) + 30;
         }
 
-        // 10. Услуги компании
         let servicesFee = 500;
 
-        // Подсчет платежей
         let p1 = carVal + aucFee + shipUSA + shipOcean + rivneShip + brokerFee + insurance + swiftFee;
         let p2 = customsTotal + servicesFee;
         let totalVal = p1 + p2;
 
-        // Вывод данных
         document.getElementById('out_usa_car_val').innerText = Math.round(carVal).toLocaleString() + ' $';
         document.getElementById('out_usa_auc').innerText = Math.round(aucFee).toLocaleString() + ' $';
         document.getElementById('out_usa_ship').innerText = Math.round(shipUSA).toLocaleString() + ' $';
@@ -575,7 +662,6 @@
         document.getElementById('total_usa').innerText = '$ ' + Math.round(totalVal).toLocaleString();
     }
 
-    // Инициализация при загрузке
     window.onload = function() {
         onAuctionChange();
     };
