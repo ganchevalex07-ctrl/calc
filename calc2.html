@@ -261,6 +261,18 @@
                     </div>
                 </div>
 
+                <!-- 9. НОВАЯ СТРОКА: ДОП. ЗАТРАТЫ -->
+                <div class="input-row-flex">
+                    <div class="input-field-group" style="flex: 1.5;">
+                        <label>9. Доп. затраты (Название)</label>
+                        <input type="text" id="usa_extra_title" placeholder="например: Підготовка документів" oninput="calcUSA()">
+                    </div>
+                    <div class="input-field-group" style="flex: 1;">
+                        <label>Сума ($)</label>
+                        <input type="number" id="usa_extra_val" value="0" oninput="calcUSA()">
+                    </div>
+                </div>
+
             </div>
 
             <div class="panel-outputs">
@@ -281,6 +293,14 @@
                 <div class="res-item"><div class="res-row-data"><span class="res-label">Страхування:</span> <span id="out_usa_ins">0 $</span></div></div>
                 <div class="res-item"><div class="res-row-data"><span class="res-label">Комісія за SWIFT переказ:</span> <span id="out_usa_swift">0 $</span></div></div>
                 
+                <!-- ДИНАМИЧЕСКАЯ СТРОКА ДОП. ЗАТРАТВ В ВЫВОДЕ -->
+                <div class="res-item" id="row_out_usa_extra" style="display: none;">
+                    <div class="res-row-data">
+                        <span class="res-label" id="out_usa_extra_title">Доп. затраты:</span> 
+                        <span class="res-value" id="out_usa_extra_val">0 $</span>
+                    </div>
+                </div>
+                
                 <div class="res-item green-highlight-box" style="margin-top: 5px;">
                     <div class="res-row-data"><span class="res-label">Другий платіж:</span> <span id="out_usa_p2">0 $</span></div>
                 </div>
@@ -299,7 +319,6 @@
 </div>
 
 <script>
-    // ================= ПОЛНАЯ БАЗА ЛОГИСТИКИ США (259+ ЛОКАЦИЙ COPART / IAAI) =================
     const logisticsUSA = {
         "Copart": {
             "AL - ANCHORAGE": { land: 1450, ocean: 2450 },
@@ -457,7 +476,6 @@
         }
     };
 
-    // ================= ИСПРАВЛЕННЫЕ И ТОЧНЫЕ СБОРЫ COPART =================
     function getCopartFee(bid) {
         if (bid <= 0) return 0;
         let tierFee = 0;
@@ -494,22 +512,20 @@
         else if (bid < 10000) tierFee = 800;
         else tierFee = bid * 0.07;
 
-        // ИСПРАВЛЕНО: ТОЧНЫЙ СБОР ЗА УЧАСТИЕ ПО ТАБЛИЦЕ COPART
         let internetFee = 0;
         if (bid < 100) internetFee = 0;
-        else if (bid < 500) internetFee = 50;  // Исправлено с 39 на 50
-        else if (bid < 1000) internetFee = 60; // Исправлено с 49 на 60
-        else if (bid < 1500) internetFee = 75; // Исправлено с 69 на 75
-        else if (bid < 2000) internetFee = 90; // Исправлено с 79 на 90
-        else if (bid < 4000) internetFee = 110; // Исправлено с 89 на 110
-        else if (bid < 6000) internetFee = 130; // Исправлено с 99 на 130
-        else if (bid < 8000) internetFee = 140; 
+        else if (bid < 500) internetFee = 50;
+        else if (bid < 1000) internetFee = 60;
+        else if (bid < 1500) internetFee = 75;
+        else if (bid < 2000) internetFee = 90;
+        else if (bid < 4000) internetFee = 110;
+        else if (bid < 6000) internetFee = 130;
+        else if (bid < 8000) internetFee = 140;
         else internetFee = 150;
 
-        return tierFee + internetFee + 150; // +150 фикс
+        return tierFee + internetFee + 150;
     }
 
-    // ================= ИСПРАВЛЕННЫЕ И ТОЧНЫЕ СБОРЫ IAAI =================
     function getIAAIFee(bid) {
         if (bid <= 0) return 0;
         let tierFee = 0;
@@ -533,7 +549,6 @@
         else if (bid < 7500) tierFee = 700;
         else tierFee = bid * 0.075;
 
-        // ИСПРАВЛЕНО: ТОЧНЫЙ СБОР ЗА УЧАСТИЕ ПО ТАБЛИЦЕ IAAI
         let internetFee = 0;
         if (bid < 100) internetFee = 0;
         else if (bid < 500) internetFee = 40;
@@ -544,7 +559,7 @@
         else if (bid < 6000) internetFee = 130;
         else internetFee = 145;
 
-        return tierFee + internetFee + 160; // +160 фикс
+        return tierFee + internetFee + 160;
     }
 
     function onAuctionChange() {
@@ -589,6 +604,19 @@
         const fuelType = document.getElementById('usa_fuel_type').value;
         const year = parseInt(document.getElementById('usa_year').value) || 2020;
         const engineVal = parseFloat(document.getElementById('usa_engine_val').value) || 0;
+
+        // Обработка доп. затрат
+        const extraTitle = document.getElementById('usa_extra_title').value.trim();
+        const extraVal = parseFloat(document.getElementById('usa_extra_val').value) || 0;
+        const rowExtraOut = document.getElementById('row_out_usa_extra');
+
+        if (extraTitle !== "") {
+            rowExtraOut.style.display = 'block';
+            document.getElementById('out_usa_extra_title').innerText = extraTitle + ':';
+            document.getElementById('out_usa_extra_val').innerText = Math.round(extraVal).toLocaleString() + ' $';
+        } else {
+            rowExtraOut.style.display = 'none';
+        }
 
         const carVal = bid;
         let aucFee = (auction === "Copart") ? getCopartFee(bid) : getIAAIFee(bid);
@@ -641,7 +669,8 @@
 
         let servicesFee = 500;
 
-        let p1 = carVal + aucFee + shipUSA + shipOcean + rivneShip + brokerFee + insurance + swiftFee;
+        // ВКЛЮЧАЕМ ДОП. ЗАТРАТЫ В ПЕРВЫЙ ПЛАТЕЖ
+        let p1 = carVal + aucFee + shipUSA + shipOcean + rivneShip + brokerFee + insurance + swiftFee + (extraTitle !== "" ? extraVal : 0);
         let p2 = customsTotal + servicesFee;
         let totalVal = p1 + p2;
 
