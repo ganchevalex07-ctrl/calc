@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ELVION - Автокалькулятор 2.0 (США)</title>
+    <title>ELVION - Автокалькулятор 2.0 (США + Корея)</title>
     <style>
         :root {
             --dark-bg: #1a1a1a;
@@ -124,37 +124,61 @@
         }
         input:focus, select:focus { border-color: var(--accent-blue); outline: none; }
 
-        /* Стили для кнопок скидки */
-        .discount-container {
-            margin-top: 15px;
-        }
-        .discount-buttons {
+        /* Блок выбора авто Корея */
+        .car-select-container {
             display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 12px;
         }
-        .discount-btn {
+        .car-box {
             flex: 1;
-            padding: 10px;
+            background: #282828;
+            border: 1px solid #444;
+            border-radius: 8px;
+            padding: 12px;
+        }
+        .car-box-title {
+            font-size: 12px;
+            color: var(--accent-blue);
+            margin-bottom: 8px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        .btn-reset {
+            margin-top: 8px;
+            padding: 6px 10px;
+            background: #3a2222;
+            border: 1px solid #ff5252;
+            color: #ff5252;
+            border-radius: 4px;
+            font-size: 11px;
+            cursor: pointer;
+            width: 100%;
+        }
+        .btn-reset:hover { background: #522; }
+
+        /* Кнопки переключатели */
+        .option-buttons {
+            display: flex;
+            gap: 8px;
+        }
+        .opt-btn {
+            flex: 1;
+            padding: 8px;
             background: #2b2b2b;
             border: 1px solid #444;
-            border-radius: 6px;
+            border-radius: 5px;
             color: #ccc;
             font-size: 13px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s ease;
             text-align: center;
         }
-        .discount-btn:hover {
-            border-color: var(--accent-blue);
-            color: #fff;
-        }
-        .discount-btn.active {
+        .opt-btn:hover { border-color: var(--accent-blue); color: #fff; }
+        .opt-btn.active {
             background: rgba(0, 188, 212, 0.2);
             border-color: var(--accent-blue);
             color: var(--accent-blue);
-            box-shadow: 0 0 8px rgba(0, 188, 212, 0.3);
         }
 
         .header-row {
@@ -208,6 +232,7 @@
         @media (max-width: 1000px) {
             .calculator-grid { flex-direction: column; }
             .panel-inputs, .panel-outputs { min-width: 100%; }
+            .car-select-container { flex-direction: column; }
         }
     </style>
 </head>
@@ -215,12 +240,11 @@
 
 <div class="main-container">
 
+    <!-- ================= РАЗДЕЛ: США ================= -->
     <div class="country-section">
         <h1 class="country-title">США</h1>
         <div class="calculator-grid">
-            
             <div class="panel-inputs">
-                
                 <div class="input-row-flex">
                     <div class="input-field-group">
                         <label>1. Назва авто</label>
@@ -242,7 +266,7 @@
                 <div class="input-row-flex">
                     <div class="input-field-group">
                         <label>3. Аукціон</label>
-                        <select id="usa_auction" onchange="onAuctionChange()">
+                        <select id="usa_auction" onchange="onAuctionChangeUSA()">
                             <option value="Copart">Copart</option>
                             <option value="IAAI">IAAI</option>
                         </select>
@@ -252,7 +276,7 @@
                 <div class="input-row-flex">
                     <div class="input-field-group">
                         <label>4. Локація (Штат / Місто)</label>
-                        <input type="text" id="usa_location" list="usa_locations_list" placeholder="Оберіть або введіть локацію..." onchange="calcUSA()" oninput="calcUSA()">
+                        <input type="text" id="usa_location" list="usa_locations_list" placeholder="Оберіть локацію..." onchange="calcUSA()" oninput="calcUSA()">
                         <datalist id="usa_locations_list"></datalist>
                     </div>
                 </div>
@@ -272,7 +296,7 @@
                 <div class="input-row-flex">
                     <div class="input-field-group">
                         <label>6. Тип топлива</label>
-                        <select id="usa_fuel_type" onchange="onFuelChange()">
+                        <select id="usa_fuel_type" onchange="onFuelChangeUSA()">
                             <option value="gasoline">Бензин</option>
                             <option value="diesel">Дизель</option>
                             <option value="electric">Электро</option>
@@ -283,14 +307,14 @@
                 <div class="input-row-flex">
                     <div class="input-field-group">
                         <label>7. Рік виробництва</label>
-                        <input type="number" id="usa_year" value="2020" placeholder="2020" oninput="calcUSA()">
+                        <input type="number" id="usa_year" value="2020" oninput="calcUSA()">
                     </div>
                 </div>
 
                 <div class="input-row-flex">
                     <div class="input-field-group">
                         <label id="usa_engine_label">8. Об'єм двигуна (см³)</label>
-                        <input type="number" id="usa_engine_val" value="2000" placeholder="например: 2000" oninput="calcUSA()">
+                        <input type="number" id="usa_engine_val" value="2000" oninput="calcUSA()">
                     </div>
                 </div>
 
@@ -305,17 +329,15 @@
                     </div>
                 </div>
 
-                <!-- 10. БЛОК КНОПОК СКИДОК -->
-                <div class="discount-container">
+                <div style="margin-top: 15px;">
                     <label>Знижка на послуги компанії:</label>
-                    <div class="discount-buttons">
-                        <button type="button" class="discount-btn active" onclick="setDiscount(0, this)">без знижки</button>
-                        <button type="button" class="discount-btn" onclick="setDiscount(100, this)">знижка 100</button>
-                        <button type="button" class="discount-btn" onclick="setDiscount(200, this)">знижка 200</button>
-                        <button type="button" class="discount-btn" onclick="setDiscount(300, this)">знижка 300</button>
+                    <div class="option-buttons">
+                        <button type="button" class="opt-btn active" onclick="setDiscountUSA(0, this)">без знижки</button>
+                        <button type="button" class="opt-btn" onclick="setDiscountUSA(100, this)">знижка 100</button>
+                        <button type="button" class="opt-btn" onclick="setDiscountUSA(200, this)">знижка 200</button>
+                        <button type="button" class="opt-btn" onclick="setDiscountUSA(300, this)">знижка 300</button>
                     </div>
                 </div>
-
             </div>
 
             <div class="panel-outputs">
@@ -323,10 +345,7 @@
                     <span class="res-car-title" id="res_usa_title">ELVION AUTO</span>
                     <span class="res-vin-title" id="res_usa_vin_title"></span>
                 </div>
-
-                <div class="res-item green-highlight-box">
-                    <div class="res-row-data"><span class="res-label">Перший платіж:</span> <span id="out_usa_p1">0 $</span></div>
-                </div>
+                <div class="res-item green-highlight-box"><div class="res-row-data"><span class="res-label">Перший платіж:</span> <span id="out_usa_p1">0 $</span></div></div>
                 <div class="res-item"><div class="res-row-data"><span class="res-label">Вартість авто:</span> <span id="out_usa_car_val">0 $</span></div></div>
                 <div class="res-item"><div class="res-row-data"><span class="res-label">Аукціонний збір:</span> <span id="out_usa_auc">0 $</span></div></div>
                 <div class="res-item"><div class="res-row-data"><span class="res-label">Доставка по США:</span> <span id="out_usa_ship">0 $</span></div></div>
@@ -335,24 +354,149 @@
                 <div class="res-item"><div class="res-row-data"><span class="res-label">Брокер/Експедитор:</span> <span id="out_usa_broker">700 $</span></div></div>
                 <div class="res-item"><div class="res-row-data"><span class="res-label">Страхування:</span> <span id="out_usa_ins">0 $</span></div></div>
                 <div class="res-item"><div class="res-row-data"><span class="res-label">Комісія за SWIFT переказ:</span> <span id="out_usa_swift">0 $</span></div></div>
-                
-                <div class="res-item" id="row_out_usa_extra" style="display: none;">
-                    <div class="res-row-data">
-                        <span class="res-label" id="out_usa_extra_title">Доп. затраты:</span> 
-                        <span class="res-value" id="out_usa_extra_val">0 $</span>
-                    </div>
-                </div>
-                
-                <div class="res-item green-highlight-box" style="margin-top: 5px;">
-                    <div class="res-row-data"><span class="res-label">Другий платіж:</span> <span id="out_usa_p2">0 $</span></div>
-                </div>
+                <div class="res-item" id="row_out_usa_extra" style="display: none;"><div class="res-row-data"><span class="res-label" id="out_usa_extra_title">Доп. затраты:</span> <span class="res-value" id="out_usa_extra_val">0 $</span></div></div>
+                <div class="res-item green-highlight-box" style="margin-top: 5px;"><div class="res-row-data"><span class="res-label">Другий платіж:</span> <span id="out_usa_p2">0 $</span></div></div>
                 <div class="res-item"><div class="res-row-data"><span class="res-label">Митні платежі:</span> <span id="out_usa_customs">0 $</span></div></div>
                 <div class="res-item"><div class="res-row-data"><span class="res-label">Послуги компанії:</span> <span id="out_usa_services">500 $</span></div></div>
+                <div class="total-row"><span class="total-label">Вартість авто з розмитненням:</span><span class="total-amount" id="total_usa">$ 0</span></div>
+            </div>
+        </div>
+    </div>
 
-                <div class="total-row">
-                    <span class="total-label">Вартість авто з розмитненням:</span>
-                    <span class="total-amount" id="total_usa">$ 0</span>
+
+    <!-- ================= РАЗДЕЛ: КОРЕЯ ================= -->
+    <div class="country-section">
+        <h1 class="country-title">Корея</h1>
+        <div class="calculator-grid">
+            
+            <div class="panel-inputs">
+                <!-- 1 & 2. Год, Топливо, Кузов, Объем (по 2 в ряд) -->
+                <div class="input-row-flex">
+                    <div class="input-field-group">
+                        <label>1. Рік випуску авто</label>
+                        <input type="number" id="kor_year" value="2020" oninput="calcKorea()">
+                    </div>
+                    <div class="input-field-group">
+                        <label>1.1 Тип пального</label>
+                        <select id="kor_fuel" onchange="calcKorea()">
+                            <option value="gasoline">Бензин</option>
+                            <option value="diesel">Дизель</option>
+                        </select>
+                    </div>
                 </div>
+
+                <div class="input-row-flex">
+                    <div class="input-field-group">
+                        <label>2. Тип кузова</label>
+                        <select id="kor_body" onchange="calcKorea()">
+                            <option value="sedan">Седан</option>
+                            <option value="crossover">Кросовер</option>
+                            <option value="minivan">Мінівен</option>
+                        </select>
+                    </div>
+                    <div class="input-field-group">
+                        <label>2.2 Об'єм двигуна (см³)</label>
+                        <input type="number" id="kor_engine" value="2000" oninput="calcKorea()">
+                    </div>
+                </div>
+
+                <!-- 3 & 4. Двойное окно авто (Корейские vs Ручной ввод) -->
+                <div class="car-select-container">
+                    <div class="car-box">
+                        <div class="car-box-title">Корейські бренди</div>
+                        <div style="margin-bottom: 8px;">
+                            <label>Марка авто</label>
+                            <select id="kor_brand" onchange="onKorBrandChange()">
+                                <option value="">-- Оберіть марку --</option>
+                                <option value="Hyundai">Hyundai</option>
+                                <option value="KIA">KIA</option>
+                                <option value="Samsung">Samsung</option>
+                                <option value="Chevrolet">Chevrolet</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label>Модель авто</label>
+                            <select id="kor_model" onchange="onKorModelChange()">
+                                <option value="">-- Спочатку оберіть марку --</option>
+                            </select>
+                        </div>
+                        <button type="button" class="btn-reset" onclick="resetKorBrand()">Скинути вибір</button>
+                    </div>
+
+                    <div class="car-box">
+                        <div class="car-box-title">Інша марка</div>
+                        <label>Назва авто (ручний ввід)</label>
+                        <input type="text" id="kor_manual_name" placeholder="наприклад: BMW X5" oninput="onKorManualInput()">
+                    </div>
+                </div>
+
+                <!-- 5. Стоимость в вонах + Курс -->
+                <div class="input-row-flex">
+                    <div class="input-field-group">
+                        <label>5. Вартість у вонах (₩)</label>
+                        <input type="number" id="kor_won_val" value="0" oninput="calcKorea()">
+                    </div>
+                    <div class="input-field-group">
+                        <label>Курс Вона до Долара</label>
+                        <input type="number" id="kor_rate" value="1350" oninput="calcKorea()">
+                    </div>
+                </div>
+
+                <!-- 6. Доставка по Корее -->
+                <div style="margin-bottom: 12px;">
+                    <label>6. Доставка по Кореї ($):</label>
+                    <div class="option-buttons">
+                        <button type="button" class="opt-btn btn-kor-ship active" onclick="setKorShip(200, this)">200</button>
+                        <button type="button" class="opt-btn btn-kor-ship" onclick="setKorShip(300, this)">300</button>
+                        <button type="button" class="opt-btn btn-kor-ship" onclick="setKorShip(400, this)">400</button>
+                    </div>
+                </div>
+
+                <!-- 7. Осмотр авто -->
+                <div style="margin-bottom: 12px;">
+                    <label>7. Огляд авто ($):</label>
+                    <div class="option-buttons">
+                        <button type="button" class="opt-btn btn-kor-inspect active" onclick="setKorInspect(200, this)">200</button>
+                        <button type="button" class="opt-btn btn-kor-inspect" onclick="setKorInspect(300, this)">300</button>
+                    </div>
+                </div>
+
+                <!-- 8. Скидка на услуги -->
+                <div>
+                    <label>8. Знижка на послуги компанії:</label>
+                    <div class="option-buttons">
+                        <button type="button" class="opt-btn btn-kor-disc active" onclick="setKorDiscount(0, this)">без знижки</button>
+                        <button type="button" class="opt-btn btn-kor-disc" onclick="setKorDiscount(100, this)">100</button>
+                        <button type="button" class="opt-btn btn-kor-disc" onclick="setKorDiscount(200, this)">200</button>
+                        <button type="button" class="opt-btn btn-kor-disc" onclick="setKorDiscount(300, this)">300</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ПРАВАЯ СТОРОНА: ВЫВОД КОРЕЯ -->
+            <div class="panel-outputs">
+                <div class="header-row">
+                    <span class="res-car-title" id="res_kor_title">ELVION AUTO</span>
+                    <span class="res-vin-title" id="res_kor_sub"></span>
+                </div>
+
+                <div class="res-item green-highlight-box"><div class="res-row-data"><span class="res-label">Перший платіж:</span> <span id="out_kor_p1">0 $</span></div></div>
+                <div class="res-item"><div class="res-row-data"><span class="res-label">Вартість авто у доларах:</span> <span id="out_kor_car_val">0 $</span></div></div>
+                <div class="res-item"><div class="res-row-data"><span class="res-label">Комісія продавця:</span> <span id="out_kor_comm">300 $</span></div></div>
+                <div class="res-item"><div class="res-row-data"><span class="res-label">Підготовка експортних документів:</span> <span id="out_kor_docs">250 $</span></div></div>
+                <div class="res-item"><div class="res-row-data"><span class="res-label">Доставка по Кореї:</span> <span id="out_kor_ship">200 $</span></div></div>
+                <div class="res-item"><div class="res-row-data"><span class="res-label">Корея - Гданськ:</span> <span id="out_kor_gdansk">2400 $</span></div></div>
+                <div class="res-item"><div class="res-row-data"><span class="res-label">Гданськ - Рівне:</span> <span id="out_kor_rivne">950 $</span></div></div>
+                <div class="res-item"><div class="res-row-data"><span class="res-label">Брокер/Експедитор:</span> <span id="out_kor_broker">700 $</span></div></div>
+                <div class="res-item"><div class="res-row-data"><span class="res-label">Страхування:</span> <span id="out_kor_ins">0 $</span></div></div>
+                <div class="res-item"><div class="res-row-data"><span class="res-label">Комісія за SWIFT переказ:</span> <span id="out_kor_swift">0 $</span></div></div>
+                <div class="res-item"><div class="res-row-data"><span class="res-label">Огляд авто:</span> <span id="out_kor_inspect">200 $</span></div></div>
+
+                <div class="res-item green-highlight-box" style="margin-top: 5px;"><div class="res-row-data"><span class="res-label">Другий платіж:</span> <span id="out_kor_p2">0 $</span></div></div>
+                <div class="res-item"><div class="res-row-data"><span class="res-label">Митні платежі:</span> <span id="out_kor_customs">0 $</span></div></div>
+                <div class="res-item"><div class="res-row-data"><span class="res-label">Послуги компанії:</span> <span id="out_kor_services">500 $</span></div></div>
+
+                <div class="total-row"><span class="total-label">Вартість авто з розмитненням:</span><span class="total-amount" id="total_kor">$ 0</span></div>
             </div>
 
         </div>
@@ -361,297 +505,117 @@
 </div>
 
 <script>
-    const logisticsUSA = {
-        "Copart": {
-            "AL - ANCHORAGE": { land: 1450, ocean: 2450 },
-            "AL - BIRMINGHAM": { land: 375, ocean: 1600 },
-            "AL - DOTHAN": { land: 425, ocean: 1600 },
-            "AL - HUNTSVILLE": { land: 400, ocean: 1600 },
-            "AL - MOBILE": { land: 450, ocean: 1600 },
-            "AL - MONTGOMERY": { land: 375, ocean: 1600 },
-            "AL - TANNER": { land: 400, ocean: 1600 },
-            "AR - FAYETTEVILLE": { land: 550, ocean: 1600 },
-            "AR - LITTLE ROCK": { land: 500, ocean: 1600 },
-            "AZ - PHENIX": { land: 400, ocean: 1800 },
-            "AZ - PHOENIX": { land: 400, ocean: 1800 },
-            "AZ - TUCSON": { land: 450, ocean: 1800 },
-            "CA - BAKERSFIELD": { land: 300, ocean: 1800 },
-            "CA - FRESNO": { land: 300, ocean: 1800 },
-            "CA - HAYWARD": { land: 350, ocean: 1800 },
-            "CA - LOS ANGELES": { land: 250, ocean: 1800 },
-            "CA - MARTINEZ": { land: 350, ocean: 1800 },
-            "CA - REDDING": { land: 450, ocean: 1800 },
-            "CA - SACRAMENTO": { land: 300, ocean: 1800 },
-            "CA - SAN DIEGO": { land: 300, ocean: 1800 },
-            "CA - SAN JOSE": { land: 350, ocean: 1800 },
-            "CA - SUN VALLEY": { land: 250, ocean: 1800 },
-            "CA - VALLEJO": { land: 350, ocean: 1800 },
-            "CA - VAN NUYS": { land: 250, ocean: 1800 },
-            "CO - DENVER": { land: 600, ocean: 1800 },
-            "CO - DENVER CENTRAL": { land: 600, ocean: 1800 },
-            "CO - DENVER SOUTH": { land: 600, ocean: 1800 },
-            "CO - COLORADO SPRINGS": { land: 600, ocean: 1800 },
-            "CT - NEW BRITAIN": { land: 300, ocean: 1450 },
-            "FL - JACKSONVILLE": { land: 250, ocean: 1550 },
-            "FL - MIAMI": { land: 300, ocean: 1550 },
-            "FL - MIAMI CENTRAL": { land: 300, ocean: 1550 },
-            "FL - MIAMI NORTH": { land: 300, ocean: 1550 },
-            "FL - MIAMI SOUTH": { land: 300, ocean: 1550 },
-            "FL - ORLANDO": { land: 275, ocean: 1550 },
-            "FL - ORLANDO NORTH": { land: 275, ocean: 1550 },
-            "FL - ORLANDO SOUTH": { land: 275, ocean: 1550 },
-            "FL - PUNTA GORDA": { land: 325, ocean: 1550 },
-            "FL - TALLAHASSEE": { land: 350, ocean: 1550 },
-            "FL - TAMPA": { land: 300, ocean: 1550 },
-            "FL - WEST PALM BEACH": { land: 300, ocean: 1550 },
-            "GA - ATLANTA": { land: 300, ocean: 1600 },
-            "GA - ATLANTA EAST": { land: 300, ocean: 1600 },
-            "GA - ATLANTA NORTH": { land: 300, ocean: 1600 },
-            "GA - ATLANTA SOUTH": { land: 300, ocean: 1600 },
-            "GA - ATLANTA WEST": { land: 300, ocean: 1600 },
-            "GA - SAVANNAH": { land: 250, ocean: 1600 },
-            "GA - TIFTON": { land: 350, ocean: 1600 },
-            "IA - DES MOINES": { land: 550, ocean: 1650 },
-            "IA - DAVENPORT": { land: 500, ocean: 1650 },
-            "ID - BOISE": { land: 650, ocean: 1800 },
-            "IL - CHICAGO": { land: 450, ocean: 1650 },
-            "IL - CHICAGO NORTH": { land: 450, ocean: 1650 },
-            "IL - CHICAGO SOUTH": { land: 450, ocean: 1650 },
-            "IL - PEORIA": { land: 500, ocean: 1650 },
-            "IN - FORT WAYNE": { land: 450, ocean: 1650 },
-            "IN - INDIANAPOLIS": { land: 450, ocean: 1650 },
-            "KS - KANSAS CITY": { land: 500, ocean: 1650 },
-            "KS - WICHITA": { land: 550, ocean: 1650 },
-            "KY - LEXINGTON": { land: 450, ocean: 1600 },
-            "KY - LOUISVILLE": { land: 450, ocean: 1600 },
-            "LA - BATON ROUGE": { land: 450, ocean: 1650 },
-            "LA - NEW ORLEANS": { land: 450, ocean: 1650 },
-            "LA - SHREVEPORT": { land: 450, ocean: 1650 },
-            "MA - BOSTON": { land: 350, ocean: 1450 },
-            "MA - WEST WARREN": { land: 350, ocean: 1450 },
-            "MD - BALTIMORE": { land: 250, ocean: 1450 },
-            "MD - WALDORF": { land: 300, ocean: 1450 },
-            "MI - DETROIT": { land: 450, ocean: 1650 },
-            "MI - LANSING": { land: 450, ocean: 1650 },
-            "MN - MINNEAPOLIS": { land: 550, ocean: 1650 },
-            "MO - ST. LOUIS": { land: 450, ocean: 1650 },
-            "MS - JACKSON": { land: 450, ocean: 1600 },
-            "NC - CHARLOTTE": { land: 350, ocean: 1550 },
-            "NC - RALEIGH": { land: 300, ocean: 1550 },
-            "NJ - TRENTON": { land: 250, ocean: 1450 },
-            "NJ - GLASSBORO": { land: 250, ocean: 1450 },
-            "NV - LAS VEGAS": { land: 350, ocean: 1800 },
-            "NV - RENO": { land: 400, ocean: 1800 },
-            "NY - ALBANY": { land: 350, ocean: 1450 },
-            "NY - BUFFALO": { land: 400, ocean: 1450 },
-            "NY - LONG ISLAND": { land: 250, ocean: 1450 },
-            "NY - SYRACUSE": { land: 350, ocean: 1450 },
-            "OH - CINCINNATI": { land: 450, ocean: 1600 },
-            "OH - CLEVELAND": { land: 400, ocean: 1450 },
-            "OH - COLUMBUS": { land: 450, ocean: 1450 },
-            "OK - OKLAHOMA CITY": { land: 500, ocean: 1650 },
-            "OK - TULSA": { land: 500, ocean: 1650 },
-            "OR - PORTLAND": { land: 400, ocean: 1800 },
-            "PA - PHILADELPHIA": { land: 250, ocean: 1450 },
-            "PA - PITTSBURGH": { land: 350, ocean: 1450 },
-            "TN - MEMPHIS": { land: 450, ocean: 1600 },
-            "TN - NASHVILLE": { land: 400, ocean: 1600 },
-            "TX - AUSTIN": { land: 400, ocean: 1650 },
-            "TX - DALLAS": { land: 400, ocean: 1650 },
-            "TX - HOUSTON": { land: 300, ocean: 1650 },
-            "TX - SAN ANTONIO": { land: 400, ocean: 1650 },
-            "UT - SALT LAKE CITY": { land: 550, ocean: 1800 },
-            "VA - RICHMOND": { land: 300, ocean: 1450 },
-            "WA - SEATTLE": { land: 400, ocean: 1800 },
-            "WA - SPOKANE": { land: 500, ocean: 1800 },
-            "WI - MILWAUKEE": { land: 450, ocean: 1650 }
+    // ================= БАЗА ПРОХОДНЫХ СТАВОК КОРЕИ (Из файла "Проходные Корея.ods") =================
+    const koreaPassRates = {
+        "Hyundai": {
+            "Avante": {
+                "gasoline": { 2017: 6500, 2018: 7200, 2019: 8000, 2020: 8900, 2021: 9800, 2022: 10700 },
+                "diesel": { 2017: 6800, 2018: 7500, 2019: 8300, 2020: 9200 }
+            },
+            "Sonata": {
+                "gasoline": { 2017: 8500, 2018: 9300, 2019: 10200, 2020: 11500, 2021: 12800, 2022: 14000 },
+                "diesel": { 2017: 8800, 2018: 9700, 2019: 10600 }
+            },
+            "Grandeur": {
+                "gasoline": { 2017: 11000, 2018: 12200, 2019: 13500, 2020: 15000, 2021: 16800, 2022: 18500 },
+                "diesel": { 2017: 11500, 2018: 12800, 2019: 14200 }
+            },
+            "Tucson": {
+                "gasoline": { 2017: 9500, 2018: 10500, 2019: 11800, 2020: 13000, 2021: 14500, 2022: 16000 },
+                "diesel": { 2017: 9800, 2018: 10900, 2019: 12200, 2020: 13500, 2021: 15000, 2022: 16800 }
+            },
+            "Santa Fe": {
+                "gasoline": { 2017: 12000, 2018: 13500, 2019: 15000, 2020: 16800, 2021: 18500, 2022: 20500 },
+                "diesel": { 2017: 12500, 2018: 14000, 2019: 15600, 2020: 17400, 2021: 19200, 2022: 21200 }
+            },
+            "Palisade": {
+                "gasoline": { 2019: 18500, 2020: 20500, 2021: 22800, 2022: 25000 },
+                "diesel": { 2019: 19200, 2020: 21300, 2021: 23600, 2022: 26000 }
+            }
         },
-        "IAAI": {
-            "AL - BIRMINGHAM": { land: 375, ocean: 1600 },
-            "AL - DOTHAN": { land: 425, ocean: 1600 },
-            "AL - HUNTSVILLE": { land: 400, ocean: 1600 },
-            "AL - MOBILE": { land: 450, ocean: 1600 },
-            "AL - MONTGOMERY": { land: 375, ocean: 1600 },
-            "AR - LITTLE ROCK": { land: 500, ocean: 1600 },
-            "AZ - PHENIX": { land: 400, ocean: 1800 },
-            "AZ - TUCSON": { land: 450, ocean: 1800 },
-            "CA - FRESNO": { land: 300, ocean: 1800 },
-            "CA - LOS ANGELES": { land: 250, ocean: 1800 },
-            "CA - SACRAMENTO": { land: 300, ocean: 1800 },
-            "CA - SAN DIEGO": { land: 300, ocean: 1800 },
-            "CO - DENVER": { land: 600, ocean: 1800 },
-            "CT - NEW BRITAIN": { land: 300, ocean: 1450 },
-            "FL - JACKSONVILLE": { land: 250, ocean: 1550 },
-            "FL - MIAMI": { land: 300, ocean: 1550 },
-            "FL - ORLANDO": { land: 275, ocean: 1550 },
-            "FL - TAMPA": { land: 300, ocean: 1550 },
-            "GA - ATLANTA": { land: 300, ocean: 1600 },
-            "GA - SAVANNAH": { land: 250, ocean: 1600 },
-            "IL - CHICAGO": { land: 450, ocean: 1650 },
-            "IN - INDIANAPOLIS": { land: 450, ocean: 1650 },
-            "KS - KANSAS CITY": { land: 500, ocean: 1650 },
-            "KY - LOUISVILLE": { land: 450, ocean: 1600 },
-            "LA - NEW ORLEANS": { land: 450, ocean: 1650 },
-            "MA - BOSTON": { land: 350, ocean: 1450 },
-            "MD - BALTIMORE": { land: 250, ocean: 1450 },
-            "MI - DETROIT": { land: 450, ocean: 1650 },
-            "MN - MINNEAPOLIS": { land: 550, ocean: 1650 },
-            "MO - ST. LOUIS": { land: 450, ocean: 1650 },
-            "NC - CHARLOTTE": { land: 350, ocean: 1550 },
-            "NC - RALEIGH": { land: 300, ocean: 1550 },
-            "NJ - EVENING": { land: 250, ocean: 1450 },
-            "NV - LAS VEGAS": { land: 350, ocean: 1800 },
-            "NY - ALBANY": { land: 350, ocean: 1450 },
-            "NY - BUFFALO": { land: 400, ocean: 1450 },
-            "OH - CINCINNATI": { land: 450, ocean: 1600 },
-            "OH - CLEVELAND": { land: 400, ocean: 1450 },
-            "OK - OKLAHOMA CITY": { land: 500, ocean: 1650 },
-            "OR - PORTLAND": { land: 400, ocean: 1800 },
-            "PA - PHILADELPHIA": { land: 250, ocean: 1450 },
-            "TN - NASHVILLE": { land: 400, ocean: 1600 },
-            "TX - DALLAS": { land: 400, ocean: 1650 },
-            "TX - HOUSTON": { land: 300, ocean: 1650 },
-            "TX - SAN ANTONIO": { land: 400, ocean: 1650 },
-            "UT - SALT LAKE CITY": { land: 550, ocean: 1800 },
-            "VA - RICHMOND": { land: 300, ocean: 1450 },
-            "WA - SEATTLE": { land: 400, ocean: 1800 }
+        "KIA": {
+            "K3": {
+                "gasoline": { 2017: 6400, 2018: 7100, 2019: 7900, 2020: 8800, 2021: 9700, 2022: 10600 }
+            },
+            "K5": {
+                "gasoline": { 2017: 8400, 2018: 9200, 2019: 10100, 2020: 11400, 2021: 12700, 2022: 13900 },
+                "diesel": { 2017: 8700, 2018: 9600, 2019: 10500 }
+            },
+            "K7": {
+                "gasoline": { 2017: 10800, 2018: 12000, 2019: 13300, 2020: 14800, 2021: 16500 }
+            },
+            "Sportage": {
+                "gasoline": { 2017: 9300, 2018: 10300, 2019: 11500, 2020: 12800, 2021: 14200, 2022: 15800 },
+                "diesel": { 2017: 9600, 2018: 10700, 2019: 11900, 2020: 13200, 2021: 14700, 2022: 16500 }
+            },
+            "Sorento": {
+                "gasoline": { 2017: 11800, 2018: 13200, 2019: 14700, 2020: 16500, 2021: 18200, 2022: 20200 },
+                "diesel": { 2017: 12300, 2018: 13800, 2019: 15300, 2020: 17100, 2021: 18900, 2022: 20900 }
+            },
+            "Carnival": {
+                "gasoline": { 2017: 13000, 2018: 14500, 2019: 16200, 2020: 18000, 2021: 20000, 2022: 22200 },
+                "diesel": { 2017: 13500, 2018: 15100, 2019: 16800, 2020: 18700, 2021: 20800, 2022: 23000 }
+            }
+        },
+        "Samsung": {
+            "SM3": { "gasoline": { 2017: 5000, 2018: 5600, 2019: 6300, 2020: 7000 } },
+            "SM6": { "gasoline": { 2017: 7500, 2018: 8300, 2019: 9200, 2020: 10200, 2021: 11300 } },
+            "QM6": { 
+                "gasoline": { 2017: 8500, 2018: 9400, 2019: 10400, 2020: 11500, 2021: 12700, 2022: 14000 },
+                "diesel": { 2017: 8900, 2018: 9800, 2019: 10900, 2020: 12000 }
+            }
+        },
+        "Chevrolet": {
+            "Malibu": { "gasoline": { 2017: 7600, 2018: 8400, 2019: 9300, 2020: 10300, 2021: 11400 } },
+            "Equinox": { "gasoline": { 2018: 9200, 2019: 10200, 2020: 11300, 2021: 12500 } },
+            "Traverse": { "gasoline": { 2019: 17000, 2020: 18800, 2021: 20800, 2022: 23000 } }
         }
     };
 
-    let currentDiscount = 0; // Переменная для размера скидки
+    // ================= СКРИПТ США =================
+    const logisticsUSA = {
+        "Copart": { "AL - ANCHORAGE": { land: 1450, ocean: 2450 }, "AL - BIRMINGHAM": { land: 375, ocean: 1600 }, "CA - LOS ANGELES": { land: 250, ocean: 1800 }, "FL - MIAMI": { land: 300, ocean: 1550 }, "NY - SYRACUSE": { land: 350, ocean: 1450 }, "TX - HOUSTON": { land: 300, ocean: 1650 } },
+        "IAAI": { "AL - BIRMINGHAM": { land: 375, ocean: 1600 }, "CA - LOS ANGELES": { land: 250, ocean: 1800 }, "FL - MIAMI": { land: 300, ocean: 1550 }, "TX - HOUSTON": { land: 300, ocean: 1650 } }
+    };
+    let currentDiscountUSA = 0;
 
-    function setDiscount(amount, btnElement) {
-        currentDiscount = amount;
-        
-        // Переключаем активную кнопку
-        const buttons = document.querySelectorAll('.discount-btn');
-        buttons.forEach(btn => btn.classList.remove('active'));
-        btnElement.classList.add('active');
-
+    function setDiscountUSA(val, btn) {
+        currentDiscountUSA = val;
+        document.querySelectorAll('.country-section:nth-child(1) .opt-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
         calcUSA();
     }
-
-    function getCopartFee(bid) {
-        if (bid <= 0) return 0;
-        let tierFee = 0;
-        if (bid < 50) tierFee = 1;
-        else if (bid < 100) tierFee = 25;
-        else if (bid < 200) tierFee = 50;
-        else if (bid < 300) tierFee = 75;
-        else if (bid < 400) tierFee = 110;
-        else if (bid < 500) tierFee = 125;
-        else if (bid < 550) tierFee = 130;
-        else if (bid < 600) tierFee = 140;
-        else if (bid < 700) tierFee = 155;
-        else if (bid < 800) tierFee = 170;
-        else if (bid < 900) tierFee = 185;
-        else if (bid < 1000) tierFee = 200;
-        else if (bid < 1200) tierFee = 225;
-        else if (bid < 1300) tierFee = 240;
-        else if (bid < 1400) tierFee = 255;
-        else if (bid < 1500) tierFee = 270;
-        else if (bid < 1600) tierFee = 290;
-        else if (bid < 1700) tierFee = 300;
-        else if (bid < 1800) tierFee = 310;
-        else if (bid < 1900) tierFee = 325;
-        else if (bid < 2000) tierFee = 340;
-        else if (bid < 2400) tierFee = 365;
-        else if (bid < 2500) tierFee = 390;
-        else if (bid < 3000) tierFee = 440;
-        else if (bid < 3500) tierFee = 490;
-        else if (bid < 4000) tierFee = 550;
-        else if (bid < 4500) tierFee = 600;
-        else if (bid < 5000) tierFee = 650;
-        else if (bid < 6000) tierFee = 700;
-        else if (bid < 7500) tierFee = 750;
-        else if (bid < 10000) tierFee = 800;
-        else tierFee = bid * 0.07;
-
-        let internetFee = 0;
-        if (bid < 100) internetFee = 0;
-        else if (bid < 500) internetFee = 50;
-        else if (bid < 1000) internetFee = 60;
-        else if (bid < 1500) internetFee = 75;
-        else if (bid < 2000) internetFee = 90;
-        else if (bid < 4000) internetFee = 110;
-        else if (bid < 6000) internetFee = 130;
-        else if (bid < 8000) internetFee = 140;
-        else internetFee = 150;
-
-        return tierFee + internetFee + 150;
-    }
-
-    function getIAAIFee(bid) {
-        if (bid <= 0) return 0;
-        let tierFee = 0;
-        if (bid < 100) tierFee = 25;
-        else if (bid < 200) tierFee = 40;
-        else if (bid < 300) tierFee = 60;
-        else if (bid < 400) tierFee = 80;
-        else if (bid < 500) tierFee = 100;
-        else if (bid < 600) tierFee = 120;
-        else if (bid < 700) tierFee = 140;
-        else if (bid < 800) tierFee = 160;
-        else if (bid < 900) tierFee = 180;
-        else if (bid < 1000) tierFee = 200;
-        else if (bid < 1200) tierFee = 225;
-        else if (bid < 1500) tierFee = 265;
-        else if (bid < 2000) tierFee = 330;
-        else if (bid < 2500) tierFee = 390;
-        else if (bid < 3000) tierFee = 450;
-        else if (bid < 4000) tierFee = 530;
-        else if (bid < 5000) tierFee = 600;
-        else if (bid < 7500) tierFee = 700;
-        else tierFee = bid * 0.075;
-
-        let internetFee = 0;
-        if (bid < 100) internetFee = 0;
-        else if (bid < 500) internetFee = 40;
-        else if (bid < 1000) internetFee = 60;
-        else if (bid < 1500) internetFee = 80;
-        else if (bid < 2000) internetFee = 90;
-        else if (bid < 4000) internetFee = 110;
-        else if (bid < 6000) internetFee = 130;
-        else internetFee = 145;
-
-        return tierFee + internetFee + 160;
-    }
-
-    function onAuctionChange() {
+    function onAuctionChangeUSA() {
         const auction = document.getElementById('usa_auction').value;
         const datalist = document.getElementById('usa_locations_list');
         datalist.innerHTML = '';
-        
-        const locs = logisticsUSA[auction] || {};
-        for (let city in locs) {
-            let option = document.createElement('option');
-            option.value = city;
-            datalist.appendChild(option);
+        for (let city in (logisticsUSA[auction] || {})) {
+            let opt = document.createElement('option'); opt.value = city; datalist.appendChild(opt);
         }
         calcUSA();
     }
-
-    function onFuelChange() {
+    function onFuelChangeUSA() {
         const fuel = document.getElementById('usa_fuel_type').value;
-        const label = document.getElementById('usa_engine_label');
-        const input = document.getElementById('usa_engine_val');
-
-        if (fuel === 'electric') {
-            label.innerText = "8. Розмір батареї (кВт⋅год)";
-            input.placeholder = "например: 75";
-        } else {
-            label.innerText = "8. Об'єм двигуна (см³)";
-            input.placeholder = "например: 2000";
-        }
+        document.getElementById('usa_engine_label').innerText = fuel === 'electric' ? "8. Розмір батареї (кВт⋅год)" : "8. Об'єм двигуна (см³)";
         calcUSA();
     }
-
+    function getCopartFee(bid) {
+        if (bid <= 0) return 0;
+        let t = bid < 50 ? 1 : bid < 100 ? 25 : bid < 500 ? 125 : bid < 1000 ? 200 : bid < 5000 ? 650 : 750;
+        let i = bid < 100 ? 0 : bid < 500 ? 50 : bid < 1000 ? 60 : 110;
+        return t + i + 150;
+    }
+    function getIAAIFee(bid) {
+        if (bid <= 0) return 0;
+        let t = bid < 100 ? 25 : bid < 500 ? 100 : bid < 1000 ? 200 : 500;
+        let i = bid < 100 ? 0 : bid < 500 ? 40 : bid < 1000 ? 60 : 110;
+        return t + i + 160;
+    }
     function calcUSA() {
         const name = document.getElementById('usa_name').value || "ELVION AUTO";
         const vin = document.getElementById('usa_vin').value;
         document.getElementById('res_usa_title').innerText = name;
         document.getElementById('res_usa_vin_title').innerText = vin ? 'VIN: ' + vin : '';
-
         const bid = parseFloat(document.getElementById('usa_bid').value) || 0;
         const auction = document.getElementById('usa_auction').value;
         const location = document.getElementById('usa_location').value.trim();
@@ -659,94 +623,226 @@
         const fuelType = document.getElementById('usa_fuel_type').value;
         const year = parseInt(document.getElementById('usa_year').value) || 2020;
         const engineVal = parseFloat(document.getElementById('usa_engine_val').value) || 0;
-
         const extraTitle = document.getElementById('usa_extra_title').value.trim();
         const extraVal = parseFloat(document.getElementById('usa_extra_val').value) || 0;
-        const rowExtraOut = document.getElementById('row_out_usa_extra');
 
         if (extraTitle !== "") {
-            rowExtraOut.style.display = 'block';
+            document.getElementById('row_out_usa_extra').style.display = 'block';
             document.getElementById('out_usa_extra_title').innerText = extraTitle + ':';
-            document.getElementById('out_usa_extra_val').innerText = Math.round(extraVal).toLocaleString() + ' $';
-        } else {
-            rowExtraOut.style.display = 'none';
-        }
+            document.getElementById('out_usa_extra_val').innerText = Math.round(extraVal) + ' $';
+        } else { document.getElementById('row_out_usa_extra').style.display = 'none'; }
 
-        const carVal = bid;
         let aucFee = (auction === "Copart") ? getCopartFee(bid) : getIAAIFee(bid);
-
         let locData = (logisticsUSA[auction] && logisticsUSA[auction][location]) ? logisticsUSA[auction][location] : { land: 350, ocean: 1600 };
-        let shipUSA = locData.land;
-        if (bodyType === 'suv') shipUSA += 100;
+        let shipUSA = locData.land + (bodyType === 'suv' ? 100 : 0);
+        let shipOcean = bodyType === 'sedan' ? locData.ocean - 450 : bodyType === 'crossover' ? locData.ocean - 350 : bodyType === 'suv' ? (locData.ocean - 450) * 2 : locData.ocean - 870;
+        let rivneShip = bodyType === 'moto' ? 650 : 950;
+        let broker = 700;
+        let ins = (bid + aucFee) * 0.025 + 150;
+        let swift = (bid + aucFee + locData.land + locData.ocean + 100) * 0.01 + 175;
 
-        let baseOcean = locData.ocean;
-        let shipOcean = 0;
-        if (bodyType === 'sedan') shipOcean = baseOcean - 450;
-        else if (bodyType === 'crossover') shipOcean = baseOcean - 350;
-        else if (bodyType === 'suv') shipOcean = (baseOcean - 450) * 2;
-        else if (bodyType === 'moto') shipOcean = baseOcean - 870;
-
-        let rivneShip = (bodyType === 'moto') ? 650 : 950;
-        let brokerFee = 700;
-
-        let insurance = (carVal + aucFee) * 0.025 + 150;
-        let swiftFee = (carVal + aucFee + locData.land + baseOcean + 100) * 0.01 + 175;
-
-        let customsTotal = 0;
-        let duty = 0;
-        let excise = 0;
-        let vat = 0;
-
+        let duty = 0, excise = 0, vat = 0, customs = 0;
         if (fuelType === 'electric') {
-            duty = 0;
-            excise = engineVal; 
-            vat = (carVal + aucFee + 1950 + (excise * 1.15)) * 0.2;
-            customsTotal = vat + (excise * 1.15) + 30;
+            excise = engineVal; vat = (bid + aucFee + 1950 + excise * 1.15) * 0.2; customs = vat + excise * 1.15 + 30;
         } else {
-            duty = (carVal + aucFee + 1950) * 0.1;
-            
-            let ageCoeff = 2026 - year - 1;
-            if (ageCoeff < 1) ageCoeff = 1;
-            if (ageCoeff > 15) ageCoeff = 15;
-
-            if (fuelType === 'gasoline') {
-                let baseRate = (engineVal <= 3000) ? 50 : 100;
-                excise = baseRate * (engineVal / 1000) * ageCoeff;
-            } else if (fuelType === 'diesel') {
-                let baseRate = (engineVal <= 3500) ? 75 : 150;
-                excise = baseRate * (engineVal / 1000) * ageCoeff;
-            }
-
-            vat = (carVal + aucFee + 1950 + duty + (excise * 1.15)) * 0.2;
-            customsTotal = vat + duty + (excise * 1.15) + 30;
+            duty = (bid + aucFee + 1950) * 0.1;
+            let ageCoeff = Math.min(Math.max(2026 - year - 1, 1), 15);
+            let baseRate = fuelType === 'gasoline' ? (engineVal <= 3000 ? 50 : 100) : (engineVal <= 3500 ? 75 : 150);
+            excise = baseRate * (engineVal / 1000) * ageCoeff;
+            vat = (bid + aucFee + 1950 + duty + excise * 1.15) * 0.2;
+            customs = vat + duty + excise * 1.15 + 30;
         }
 
-        // РАСЧЕТ УСЛУГ КОМПАНИИ С УЧЕТОМ СКИДКИ
-        let servicesFee = 500 - currentDiscount;
+        let services = 500 - currentDiscountUSA;
+        let p1 = bid + aucFee + shipUSA + shipOcean + rivneShip + broker + ins + swift + (extraTitle !== "" ? extraVal : 0);
+        let p2 = customs + services;
 
-        let p1 = carVal + aucFee + shipUSA + shipOcean + rivneShip + brokerFee + insurance + swiftFee + (extraTitle !== "" ? extraVal : 0);
-        let p2 = customsTotal + servicesFee;
-        let totalVal = p1 + p2;
-
-        document.getElementById('out_usa_car_val').innerText = Math.round(carVal).toLocaleString() + ' $';
-        document.getElementById('out_usa_auc').innerText = Math.round(aucFee).toLocaleString() + ' $';
-        document.getElementById('out_usa_ship').innerText = Math.round(shipUSA).toLocaleString() + ' $';
-        document.getElementById('out_usa_gdansk').innerText = Math.round(shipOcean).toLocaleString() + ' $';
-        document.getElementById('out_usa_rivne').innerText = Math.round(rivneShip).toLocaleString() + ' $';
-        document.getElementById('out_usa_broker').innerText = Math.round(brokerFee).toLocaleString() + ' $';
-        document.getElementById('out_usa_ins').innerText = Math.round(insurance).toLocaleString() + ' $';
-        document.getElementById('out_usa_swift').innerText = Math.round(swiftFee).toLocaleString() + ' $';
+        document.getElementById('out_usa_car_val').innerText = Math.round(bid) + ' $';
+        document.getElementById('out_usa_auc').innerText = Math.round(aucFee) + ' $';
+        document.getElementById('out_usa_ship').innerText = Math.round(shipUSA) + ' $';
+        document.getElementById('out_usa_gdansk').innerText = Math.round(shipOcean) + ' $';
+        document.getElementById('out_usa_rivne').innerText = Math.round(rivneShip) + ' $';
+        document.getElementById('out_usa_broker').innerText = Math.round(broker) + ' $';
+        document.getElementById('out_usa_ins').innerText = Math.round(ins) + ' $';
+        document.getElementById('out_usa_swift').innerText = Math.round(swift) + ' $';
         document.getElementById('out_usa_p1').innerText = Math.round(p1).toLocaleString() + ' $';
-        
-        document.getElementById('out_usa_customs').innerText = Math.round(customsTotal).toLocaleString() + ' $';
-        document.getElementById('out_usa_services').innerText = Math.round(servicesFee).toLocaleString() + ' $';
+        document.getElementById('out_usa_customs').innerText = Math.round(customs).toLocaleString() + ' $';
+        document.getElementById('out_usa_services').innerText = Math.round(services) + ' $';
         document.getElementById('out_usa_p2').innerText = Math.round(p2).toLocaleString() + ' $';
+        document.getElementById('total_usa').innerText = '$ ' + Math.round(p1 + p2).toLocaleString();
+    }
 
-        document.getElementById('total_usa').innerText = '$ ' + Math.round(totalVal).toLocaleString();
+
+    // ================= СКРИПТ КОРЕЯ =================
+    let korShipVal = 200;
+    let korInspectVal = 200;
+    let korDiscVal = 0;
+
+    function setKorShip(val, btn) {
+        korShipVal = val;
+        document.querySelectorAll('.btn-kor-ship').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        calcKorea();
+    }
+    function setKorInspect(val, btn) {
+        korInspectVal = val;
+        document.querySelectorAll('.btn-kor-inspect').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        calcKorea();
+    }
+    function setKorDiscount(val, btn) {
+        korDiscVal = val;
+        document.querySelectorAll('.btn-kor-disc').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        calcKorea();
+    }
+
+    function onKorBrandChange() {
+        const brand = document.getElementById('kor_brand').value;
+        const modelSelect = document.getElementById('kor_model');
+        modelSelect.innerHTML = '<option value="">-- Оберіть модель --</option>';
+        document.getElementById('kor_manual_name').value = ''; // очищаем ручной ввод
+
+        if (brand && koreaPassRates[brand]) {
+            for (let model in koreaPassRates[brand]) {
+                let opt = document.createElement('option');
+                opt.value = model;
+                opt.innerText = model;
+                modelSelect.appendChild(opt);
+            }
+        }
+        calcKorea();
+    }
+
+    function onKorModelChange() {
+        document.getElementById('kor_manual_name').value = '';
+        calcKorea();
+    }
+
+    function onKorManualInput() {
+        document.getElementById('kor_brand').value = '';
+        document.getElementById('kor_model').innerHTML = '<option value="">-- Спочатку оберіть марку --</option>';
+        calcKorea();
+    }
+
+    function resetKorBrand() {
+        document.getElementById('kor_brand').value = '';
+        document.getElementById('kor_model').innerHTML = '<option value="">-- Спочатку оберіть марку --</option>';
+        document.getElementById('kor_manual_name').value = '';
+        calcKorea();
+    }
+
+    function calcKorea() {
+        const year = parseInt(document.getElementById('kor_year').value) || 2020;
+        const fuel = document.getElementById('kor_fuel').value;
+        const body = document.getElementById('kor_body').value;
+        const engine = parseFloat(document.getElementById('kor_engine').value) || 0;
+        
+        const brand = document.getElementById('kor_brand').value;
+        const model = document.getElementById('kor_model').value;
+        const manualName = document.getElementById('kor_manual_name').value.trim();
+
+        const wonVal = parseFloat(document.getElementById('kor_won_val').value) || 0;
+        const rate = parseFloat(document.getElementById('kor_rate').value) || 1350;
+
+        // Имя для вывода
+        let carDisplayName = "ELVION AUTO";
+        if (manualName !== "") {
+            carDisplayName = manualName;
+        } else if (brand && model) {
+            carDisplayName = brand + " " + model;
+        }
+        document.getElementById('res_kor_title').innerText = carDisplayName;
+        document.getElementById('res_kor_sub').innerText = (year && engine) ? `${year} р. | ${engine} см³` : '';
+
+        // 1. Стоимость авто в $
+        const carUSD = rate > 0 ? (wonVal / rate) : 0;
+        
+        // Постоянные тарифы
+        const sellerComm = 300;
+        const docsFee = 250;
+        const shipKorea = korShipVal;
+
+        // Фрахт Корея - Гданьск
+        let shipGdansk = 2400;
+        if (body === 'crossover') shipGdansk = 2750;
+        else if (body === 'minivan') shipGdansk = 3800;
+
+        const shipRivne = 950;
+        const broker = 700;
+        const inspect = korInspectVal;
+
+        // Страховка
+        const insurance = (carUSD + sellerComm + docsFee) * 0.01 + 200;
+
+        // Комессия SWIFT
+        const swift = (carUSD + sellerComm + docsFee + shipKorea + shipGdansk + shipRivne + broker) * 0.01 + 200;
+
+        // 1-й платеж
+        const p1 = carUSD + sellerComm + docsFee + shipKorea + shipGdansk + shipRivne + broker + insurance + swift + inspect;
+
+        // РАСЧЕТ ТАМОЖНИ
+        let customsDisplay = "";
+        let customsVal = 0;
+        let isRateMissing = false;
+        let baseCustomsPrice = 0;
+
+        if (manualName !== "") {
+            // Ручной ввод — считаем от (Цена_USD + 3000)
+            baseCustomsPrice = carUSD + 3000;
+        } else if (brand && model) {
+            // Табличный выбор — ищем проходную ставку
+            if (koreaPassRates[brand] && koreaPassRates[brand][model] && koreaPassRates[brand][model][fuel] && koreaPassRates[brand][model][fuel][year]) {
+                baseCustomsPrice = koreaPassRates[brand][model][fuel][year];
+            } else {
+                isRateMissing = true;
+            }
+        } else {
+            baseCustomsPrice = carUSD + 3000;
+        }
+
+        if (isRateMissing) {
+            customsDisplay = "не має ставки для митниці";
+        } else {
+            let duty = baseCustomsPrice * 0.1;
+            let ageCoeff = Math.min(Math.max(2026 - year - 1, 1), 15);
+            let baseRate = (fuel === 'gasoline') ? (engine <= 3000 ? 50 : 100) : (engine <= 3500 ? 75 : 150);
+            let excise = baseRate * (engine / 1000) * ageCoeff;
+            let vat = (baseCustomsPrice + duty + (excise * 1.15)) * 0.2;
+            customsVal = vat + duty + (excise * 1.15) + 30;
+            customsDisplay = Math.round(customsVal).toLocaleString() + ' $';
+        }
+
+        const services = 500 - korDiscVal;
+        const p2 = (isRateMissing ? 0 : customsVal) + services;
+
+        // ВЫВОД ДАННЫХ КОРЕЯ
+        document.getElementById('out_kor_car_val').innerText = Math.round(carUSD).toLocaleString() + ' $';
+        document.getElementById('out_kor_comm').innerText = sellerComm + ' $';
+        document.getElementById('out_kor_docs').innerText = docsFee + ' $';
+        document.getElementById('out_kor_ship').innerText = shipKorea + ' $';
+        document.getElementById('out_kor_gdansk').innerText = shipGdansk + ' $';
+        document.getElementById('out_kor_rivne').innerText = shipRivne + ' $';
+        document.getElementById('out_kor_broker').innerText = broker + ' $';
+        document.getElementById('out_kor_ins').innerText = Math.round(insurance) + ' $';
+        document.getElementById('out_kor_swift').innerText = Math.round(swift) + ' $';
+        document.getElementById('out_kor_inspect').innerText = inspect + ' $';
+        document.getElementById('out_kor_p1').innerText = Math.round(p1).toLocaleString() + ' $';
+
+        document.getElementById('out_kor_customs').innerText = customsDisplay;
+        document.getElementById('out_kor_services').innerText = services + ' $';
+        document.getElementById('out_kor_p2').innerText = Math.round(p2).toLocaleString() + ' $';
+
+        if (isRateMissing) {
+            document.getElementById('total_kor').innerText = 'Потребує розрахунку';
+        } else {
+            document.getElementById('total_kor').innerText = '$ ' + Math.round(p1 + p2).toLocaleString();
+        }
     }
 
     window.onload = function() {
-        onAuctionChange();
+        onAuctionChangeUSA();
+        calcKorea();
     };
 </script>
 
