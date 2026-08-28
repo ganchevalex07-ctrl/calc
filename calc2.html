@@ -630,9 +630,470 @@
 
     // ================= СКРИПТ США =================
     const logisticsUSA = {
-        "Copart": { "AL - ANCHORAGE": { land: 1450, ocean: 2450 }, "AL - BIRMINGHAM": { land: 375, ocean: 1600 }, "CA - LOS ANGELES": { land: 250, ocean: 1800 }, "FL - MIAMI": { land: 300, ocean: 1550 }, "NY - SYRACUSE": { land: 350, ocean: 1450 }, "TX - HOUSTON": { land: 300, ocean: 1650 } },
-        "IAAI": { "AL - BIRMINGHAM": { land: 375, ocean: 1600 }, "CA - LOS ANGELES": { land: 250, ocean: 1800 }, "FL - MIAMI": { land: 300, ocean: 1550 }, "TX - HOUSTON": { land: 300, ocean: 1650 } }
-    };
+        "Copart": {
+    "GA, AUSTELL": { land: 350, ocean: 1695 },
+    "TX, Abilene": { land: 460, ocean: 1820 },
+    "CA, Adelanto": { land: 350, ocean: 2220 },
+    "NY, Albany": { land: 375, ocean: 1695 },
+    "NM, Albuquerque": { land: 675, ocean: 1820 },
+    "PA, Altoona": { land: 500, ocean: 1695 },
+    "TX, Amarillo": { land: 525, ocean: 1820 },
+    "TX, Andrews": { land: 525, ocean: 1820 },
+    "CA, Antelope": { land: 500, ocean: 2220 },
+    "WI, Appleton": { land: 825, ocean: 1695 },
+    "GA, Atlanta East": { land: 400, ocean: 1695 },
+    "GA, Atlanta North": { land: 425, ocean: 1695 },
+    "GA, Atlanta South": { land: 450, ocean: 1695 },
+    "GA, Atlanta West": { land: 400, ocean: 1695 },
+    "GA, Augusta": { land: 350, ocean: 1695 },
+    "TX, Austin": { land: 350, ocean: 1820 },
+    "MO, BRIDGETON": { land: 650, ocean: 1695 },
+    "NY, BROOKHAVEN": { land: 350, ocean: 1695 },
+    "GA, BYRON": { land: 375, ocean: 1695 },
+    "CA, Bakersfield": { land: 325, ocean: 2220 },
+    "MD, Baltimore": { land: 400, ocean: 1695 },
+    "MD, Baltimore East": { land: 400, ocean: 1695 },
+    "LA, Baton Rouge": { land: 450, ocean: 1820 },
+    "MT, Billings": { land: 1600, ocean: 1695 },
+    "AL, Birmingham": { land: 500, ocean: 1695 },
+    "ID, Boise": { land: 850, ocean: 2220 },
+    "NY, Buffalo": { land: 550, ocean: 1695 },
+    "IA, CEDAR RAPIDS": { land: 800, ocean: 1695 },
+    "NY, CENTRAL SQUARE": { land: 450, ocean: 1695 },
+    "VA, CHATHAM": { land: 460, ocean: 1695 },
+    "AR, CONWAY": { land: 525, ocean: 1820 },
+    "MN, CRASHEDTOYS MINN": { land: 800, ocean: 1695 },
+    "NH, Candia": { land: 475, ocean: 1695 },
+    "GA, Cartersville": { land: 425, ocean: 1695 },
+    "WY, Casper": { land: 1050, ocean: 2220 },
+    "PA, Chambersburg": { land: 400, ocean: 1695 },
+    "WV, Charleston": { land: 600, ocean: 1695 },
+    "IL, Chicago North": { land: 650, ocean: 1695 },
+    "IL, Chicago South": { land: 675, ocean: 1695 },
+    "NC, China Grove": { land: 400, ocean: 1695 },
+    "IN, Cicero": { land: 700, ocean: 1695 },
+    "OH, Cleveland East": { land: 550, ocean: 1695 },
+    "OH, Cleveland West": { land: 550, ocean: 1695 },
+    "CO, Colorado Springs": { land: 700, ocean: 1820 },
+    "CA, Colton": { land: 275, ocean: 2220 },
+    "SC, Columbia": { land: 300, ocean: 1695 },
+    "OH, Columbus": { land: 550, ocean: 1695 },
+    "NC, Concord": { land: 400, ocean: 1695 },
+    "TX, Corpus Christi": { land: 350, ocean: 1820 },
+    "TX, Crashedtoys Dallas": { land: 350, ocean: 1820 },
+    "PA, DURYEA": { land: 375, ocean: 1695 },
+    "TX, Dallas": { land: 350, ocean: 1820 },
+    "TX, Dallas South": { land: 350, ocean: 1820 },
+    "IA, Davenport": { land: 750, ocean: 1695 },
+    "OH, Dayton": { land: 550, ocean: 1695 },
+    "IA, De Soto": { land: 750, ocean: 1695 },
+    "CO, Denver": { land: 700, ocean: 1820 },
+    "CO, Denver Central": { land: 700, ocean: 1820 },
+    "CO, Denver South": { land: 700, ocean: 1820 },
+    "IA, Des Moines": { land: 750, ocean: 1695 },
+    "MI, Detroit": { land: 650, ocean: 1695 },
+    "AL, Dothan": { land: 450, ocean: 1695 },
+    "IN, Dyer": { land: 700, ocean: 1695 },
+    "PA, EBENSBURG": { land: 500, ocean: 1695 },
+    "TX, El Paso": { land: 560, ocean: 1820 },
+    "GA, ELLENWOOD": { land: 450, ocean: 1695 },
+    "PA, ELLWOOD CITY": { land: 500, ocean: 1695 },
+    "KY, Earlington": { land: 725, ocean: 1695 },
+    "OR, Eugene": { land: 825, ocean: 2220 },
+    "RI, Exeter": { land: 400, ocean: 1695 },
+    "MD, FINKSBURG": { land: 400, ocean: 1695 },
+    "MS, FLORENCE": { land: 550, ocean: 1695 },
+    "AR, Fayetteville": { land: 525, ocean: 1820 },
+    "MI, Flint": { land: 735, ocean: 1695 },
+    "FL, Fort Myers": { land: 450, ocean: 1695 },
+    "FL, Fort Pierce": { land: 500, ocean: 1695 },
+    "IN, Fort Wayne": { land: 675, ocean: 1695 },
+    "VA, Fredericksburg": { land: 425, ocean: 1695 },
+    "MA, Freetown": { land: 450, ocean: 1695 },
+    "CA, Fresno": { land: 425, ocean: 2220 },
+    "FL, Ft. Pierce": { land: 500, ocean: 1695 },
+    "TX, Ft. Worth": { land: 350, ocean: 1820 },
+    "GA, GAINESVILLE": { land: 425, ocean: 1695 },
+    "SC, GASTON": { land: 300, ocean: 1695 },
+    "PA, GRANTVILLE": { land: 400, ocean: 1695 },
+    "NE, GREENWOOD": { land: 750, ocean: 1695 },
+    "NJ, Glassboro East": { land: 285, ocean: 1695 },
+    "NJ, GLASSBORO WEST": { land: 285, ocean: 1695 },
+    "WA, Graham": { land: 875, ocean: 2220 },
+    "IN, HAMMOND": { land: 700, ocean: 1695 },
+    "IN, HARTFORD CITY": { land: 900, ocean: 1695 },
+    "NJ, HILLSBOROUGH": { land: 285, ocean: 1695 },
+    "FL, HOMESTEAD": { land: 450, ocean: 1695 },
+    "VA, Hampton": { land: 450, ocean: 1695 },
+    "PA, Harrisburg": { land: 400, ocean: 1695 },
+    "CT, Hartford": { land: 350, ocean: 1695 },
+    "CT, Hartford Springfield": { land: 375, ocean: 1695 },
+    "CA, Hayward": { land: 550, ocean: 2220 },
+    "MT, Helena": { land: 1600, ocean: 1695 },
+    "TX, Houston": { land: 250, ocean: 1820 },
+    "TX, Houston East": { land: 250, ocean: 1820 },
+    "IN, Indianapolis": { land: 725, ocean: 1695 },
+    "MI, Ionia": { land: 750, ocean: 1695 },
+    "MS, Jackson": { land: 550, ocean: 1695 },
+    "FL, Jacksonville": { land: 325, ocean: 1695 },
+    "KS, KANSAS CITY EAST": { land: 650, ocean: 1695 },
+    "KS, Kansas City": { land: 700, ocean: 1695 },
+    "TN, Knoxville": { land: 475, ocean: 1695 },
+    "MD, LAUREL": { land: 400, ocean: 1695 },
+    "KY, LAWRENCEBURG": { land: 650, ocean: 1695 },
+    "NY, LEROY": { land: 500, ocean: 1695 },
+    "KY, LEXINGTON": { land: 650, ocean: 1695 },
+    "GA, LOGANVILLE": { land: 400, ocean: 1695 },
+    "MI, Lansing": { land: 700, ocean: 1695 },
+    "NV, Las Vegas": { land: 400, ocean: 2220 },
+    "KY, Lexington East": { land: 650, ocean: 1695 },
+    "KY, Lexington West": { land: 650, ocean: 1695 },
+    "NE, Lincoln": { land: 725, ocean: 1695 },
+    "AR, Little Rock": { land: 525, ocean: 1820 },
+    "CA, Long Beach": { land: 260, ocean: 2220 },
+    "NY, Long Island": { land: 350, ocean: 1695 },
+    "TX, Longview": { land: 350, ocean: 1820 },
+    "CA, Los Angeles": { land: 275, ocean: 2220 },
+    "KY, Louisville": { land: 700, ocean: 1695 },
+    "NC, Lumberton": { land: 400, ocean: 1695 },
+    "ME, Lyman": { land: 550, ocean: 1695 },
+    "WI, MADISON": { land: 750, ocean: 1695 },
+    "TN, MADISONVILLE": { land: 475, ocean: 1695 },
+    "NY, MARLBORO": { land: 325, ocean: 1695 },
+    "MA, MENDON": { land: 450, ocean: 1695 },
+    "TX, MERCEDES": { land: 450, ocean: 1820 },
+    "FL, MIAMI": { land: 450, ocean: 1695 },
+    "FL, MIDWAY": { land: 450, ocean: 1695 },
+    "GA, Macon": { land: 375, ocean: 1695 },
+    "WI, Madison South": { land: 750, ocean: 1695 },
+    "CA, Martinez": { land: 525, ocean: 2220 },
+    "TX, Mcallen": { land: 450, ocean: 1820 },
+    "TN, Memphis": { land: 550, ocean: 1695 },
+    "FL, Miami South": { land: 450, ocean: 1695 },
+    "WI, Milwaukee": { land: 700, ocean: 1695 },
+    "WI, Milwaukee North": { land: 750, ocean: 1695 },
+    "WI, Milwaukee South": { land: 750, ocean: 1695 },
+    "MN, Minneapolis": { land: 800, ocean: 1695 },
+    "MN, Minneapolis North": { land: 775, ocean: 1695 },
+    "AL, Mobile": { land: 475, ocean: 1695 },
+    "AL, Mobile South": { land: 600, ocean: 1695 },
+    "AL, Montgomery": { land: 475, ocean: 1695 },
+    "CA, NAPA": { land: 575, ocean: 2220 },
+    "CT, NEW BRITAIN": { land: 350, ocean: 1695 },
+    "OH, NORTHFIELD": { land: 550, ocean: 1695 },
+    "TN, Nashville": { land: 500, ocean: 1695 },
+    "LA, New Orleans": { land: 450, ocean: 1820 },
+    "NY, Newburgh": { land: 350, ocean: 1695 },
+    "MA, North Boston": { land: 450, ocean: 1695 },
+    "SC, North Charleston": { land: 300, ocean: 1695 },
+    "MO, North Kansas City": { land: 650, ocean: 1695 },
+    "WA, North Seattle": { land: 875, ocean: 2220 },
+    "UT, Ogden": { land: 525, ocean: 2220 },
+    "OK, Oklahoma City": { land: 525, ocean: 1820 },
+    "FL, Orlando": { land: 400, ocean: 1695 },
+    "FL, Orlando North": { land: 425, ocean: 1695 },
+    "FL, Orlando South": { land: 400, ocean: 1695 },
+    "PA, PENNSBURG": { land: 325, ocean: 1695 },
+    "AR, PRAIRIE GROVE": { land: 525, ocean: 1820 },
+    "FL, PUNTA GORDA": { land: 450, ocean: 1695 },
+    "WA, Pasco": { land: 1050, ocean: 2220 },
+    "IL, Peoria": { land: 675, ocean: 1695 },
+    "PA, Philadelphia": { land: 325, ocean: 1695 },
+    "PA, Philadelphia East": { land: 325, ocean: 1695 },
+    "AZ, Phoenix": { land: 775, ocean: 1820 },
+    "PA, Pittsburgh North": { land: 500, ocean: 1695 },
+    "PA, Pittsburgh South": { land: 525, ocean: 1695 },
+    "PA, Pittsburgh West": { land: 525, ocean: 1695 },
+    "OR, Portland": { land: 875, ocean: 2220 },
+    "OR, Portland North": { land: 875, ocean: 2220 },
+    "OR, Portland South": { land: 875, ocean: 2220 },
+    "FL, Punta Gorda South": { land: 450, ocean: 1695 },
+    "FL, RIVERVIEW": { land: 425, ocean: 1695 },
+    "MO, ROGERSVILLE": { land: 775, ocean: 1695 },
+    "NC, Raleigh": { land: 400, ocean: 1695 },
+    "NC, Raleigh North": { land: 400, ocean: 1695 },
+    "CA, Rancho Cucamonga": { land: 275, ocean: 2220 },
+    "CA, Redding": { land: 600, ocean: 2220 },
+    "NV, Reno": { land: 600, ocean: 2220 },
+    "VA, Richmond": { land: 440, ocean: 1695 },
+    "VA, Richmond East": { land: 475, ocean: 1695 },
+    "NY, Rochester": { land: 525, ocean: 1695 },
+    "CA, SAN MARTIN": { land: 525, ocean: 2220 },
+    "CA, SO Sacramento": { land: 525, ocean: 2220 },
+    "CA, Sacramento": { land: 525, ocean: 2220 },
+    "UT, Salt Lake City": { land: 575, ocean: 2220 },
+    "TX, San Antonio": { land: 350, ocean: 1820 },
+    "CA, San Bernardino": { land: 275, ocean: 2220 },
+    "CA, San Diego": { land: 325, ocean: 2220 },
+    "CA, San Jose": { land: 525, ocean: 2220 },
+    "GA, Savannah": { land: 240, ocean: 1695 },
+    "PA, Scranton": { land: 375, ocean: 1695 },
+    "DE, Seaford": { land: 400, ocean: 1695 },
+    "LA, Shreveport": { land: 400, ocean: 1820 },
+    "MO, Sikeston": { land: 725, ocean: 1695 },
+    "NJ, Somerville": { land: 300, ocean: 1695 },
+    "MA, South Boston": { land: 450, ocean: 1695 },
+    "SC, Spartanburg": { land: 375, ocean: 1695 },
+    "WA, Spokane": { land: 1050, ocean: 2220 },
+    "MO, Springfield": { land: 700, ocean: 1695 },
+    "MN, St. Cloud": { land: 825, ocean: 1695 },
+    "MO, St. Louis": { land: 650, ocean: 1695 },
+    "CA, Sun Valley": { land: 275, ocean: 2220 },
+    "NY, Syracuse": { land: 450, ocean: 1695 },
+    "TX, TEMPLE": { land: 350, ocean: 1820 },
+    "FL, Tallahassee": { land: 450, ocean: 1695 },
+    "FL, Tampa South": { land: 425, ocean: 1695 },
+    "AL, Tanner": { land: 475, ocean: 1695 },
+    "GA, Tifton": { land: 375, ocean: 1695 },
+    "NJ, Trenton": { land: 285, ocean: 1695 },
+    "AZ, Tucson": { land: 475, ocean: 2220 },
+    "OK, Tulsa": { land: 575, ocean: 1820 },
+    "CA, Vallejo": { land: 500, ocean: 2220 },
+    "CA, Van Nuys": { land: 275, ocean: 2220 },
+    "MD, WALDORF": { land: 400, ocean: 1695 },
+    "DC, WASHINGTON DC": { land: 400, ocean: 1695 },
+    "TX, WILMER": { land: 350, ocean: 1820 },
+    "NJ, WINDSOR": { land: 285, ocean: 1695 },
+    "OR, WOODBURN": { land: 875, ocean: 2220 },
+    "TX, Waco": { land: 350, ocean: 1820 },
+    "KY, Walton": { land: 650, ocean: 1695 },
+    "IA, Waterloo": { land: 800, ocean: 1695 },
+    "FL, West Palm Beach": { land: 450, ocean: 1695 },
+    "MA, West Warren": { land: 450, ocean: 1695 },
+    "IL, Wheeling": { land: 650, ocean: 1695 },
+    "KS, Wichita": { land: 700, ocean: 1820 },
+    "ME, Windham": { land: 550, ocean: 1695 },
+    "PA, York Haven": { land: 425, ocean: 1695 },
+    "CA, Menton": { land: 300, ocean: 2220 },
+    "VT, RUTLAND": { land: 600, ocean: 1695 },
+    "OH, Barberton": { land: 575, ocean: 1695 },
+    "NC, MEBANE": { land: 400, ocean: 1695 },
+    "NC, GASTONIA": { land: 425, ocean: 1695 },
+    "GA, FAIRBURN": { land: 425, ocean: 1695 },
+    "MI, WAYLAND": { land: 850, ocean: 1695 },
+    "TX, NORTH AUSTIN": { land: 400, ocean: 1820 },
+    "WA, Spanaway": { land: 850, ocean: 2220 },
+    "FL, TAMPA NORTH": { land: 425, ocean: 1695 },
+    "CA, Santa Clarita": { land: 350, ocean: 2220 },
+    "FL, CLEWISTON": { land: 525, ocean: 1695 },
+    "FL, OCALA": { land: 425, ocean: 1695 },
+    "NV, LAS VEGAS WEST": { land: 400, ocean: 2220 },
+    "MT, BILLINGS": { land: 800, ocean: 1775 },
+    "MT, HELENA": { land: 875, ocean: 1775 },
+    "TX, LUFKIN": { land: 375, ocean: 1820 },
+    "NC, MOCKSVILLE": { land: 425, ocean: 1695 },
+    "MO, COLUMBIA": { land: 700, ocean: 1695 },
+    "IL, SOUTHERN ILLINOIS": { land: 700, ocean: 1695 },
+    "UT, OGDEN": { land: 1125, ocean: 1820 },
+    "AL, CUSSETA": { land: 500, ocean: 1695 },
+    "CA, VAN NUYS": { land: 1150, ocean: 1820 },
+    "CA, SUN VALLEY": { land: 1150, ocean: 1820 },
+    "LA, VINTON": { land: 400, ocean: 1820 },
+    "NC, Lagrange": { land: 500, ocean: 1695 }
+},
+        "IAAI": {
+        "TX, Abilene": { land: 460, ocean: 1820 },
+        "CA, Ace - Carson": { land: 275, ocean: 2220 },
+        "CA, Ace - Perris": { land: 300, ocean: 2220 },
+        "CA, Ace - Perris 2": { land: 300, ocean: 2220 },
+        "OH, Akron-Canton": { land: 575, ocean: 1695 },
+        "NY, Albany": { land: 375, ocean: 1695 },
+        "NM, Albuquerque": { land: 675, ocean: 1820 },
+        "PA, Altoona": { land: 500, ocean: 1695 },
+        "TX, Amarillo": { land: 525, ocean: 1820 },
+        "CA, Anaheim": { land: 250, ocean: 2220 },
+        "CA, Anaheim Consolidated": { land: 1150, ocean: 1820 },
+        "WI, Appleton": { land: 825, ocean: 1695 },
+        "NC, Asheville": { land: 450, ocean: 1695 },
+        "KY, Ashland": { land: 600, ocean: 1695 },
+        "GA, Atlanta": { land: 400, ocean: 1695 },
+        "GA, Atlanta East": { land: 400, ocean: 1695 },
+        "GA, Atlanta North": { land: 400, ocean: 1695 },
+        "GA, Atlanta South": { land: 400, ocean: 1695 },
+        "TX, Austin": { land: 350, ocean: 1820 },
+        "TX, Austin North": { land: 350, ocean: 1820 },
+        "NJ, Avenel New Jersey": { land: 250, ocean: 1695 },
+        "MD, Baltimore": { land: 400, ocean: 1695 },
+        "LA, Baton Rouge": { land: 450, ocean: 1820 },
+        "MT, Billings": { land: 1600, ocean: 1695 },
+        "AL, Birmingham": { land: 475, ocean: 1695 },
+        "ID, Boise": { land: 850, ocean: 2220 },
+        "MA, Boston": { land: 450, ocean: 1695 },
+        "MA, Boston - Shirley": { land: 450, ocean: 1695 },
+        "KY, Bowling Green": { land: 700, ocean: 1695 },
+        "PA, Bridgeport": { land: 325, ocean: 1695 },
+        "WV, Buckhannon": { land: 600, ocean: 1695 },
+        "NY, Buffalo": { land: 550, ocean: 1695 },
+        "VT, Burlington": { land: 550, ocean: 1695 },
+        "TX, CAT HOUSTON": { land: 250, ocean: 1820 },
+        "NJ, Carteret": { land: 300, ocean: 1695 },
+        "WY, Casper": { land: 1050, ocean: 2220 },
+        "NJ, Central New Jersey": { land: 285, ocean: 1695 },
+        "SC, Charleston": { land: 275, ocean: 1695 },
+        "NC, Charlotte": { land: 400, ocean: 1695 },
+        "TN, Chattanooga": { land: 500, ocean: 1695 },
+        "IL, Chicago-North": { land: 725, ocean: 1695 },
+        "IL, Chicago-South": { land: 700, ocean: 1695 },
+        "IL, Chicago-West": { land: 650, ocean: 1695 },
+        "OH, Cincinnati": { land: 575, ocean: 1695 },
+        "OH, Cincinnati-South": { land: 575, ocean: 1695 },
+        "FL, Clearwater": { land: 450, ocean: 1695 },
+        "OH, Cleveland": { land: 550, ocean: 1695 },
+        "CO, Colorado Springs": { land: 700, ocean: 1820 },
+        "CA, Colton": { land: 275, ocean: 2220 },
+        "SC, Columbia": { land: 300, ocean: 1695 },
+        "OH, Columbus": { land: 575, ocean: 1695 },
+        "NC, Concord": { land: 400, ocean: 1695 },
+        "TX, Corpus Christi": { land: 350, ocean: 1820 },
+        "VA, Culpeper": { land: 400, ocean: 1695 },
+        "TX, Dallas": { land: 350, ocean: 1820 },
+        "TX, Dallas/Ft Worth": { land: 350, ocean: 1820 },
+        "IA, Davenport": { land: 750, ocean: 1695 },
+        "OH, Dayton": { land: 550, ocean: 1695 },
+        "CO, Denver": { land: 700, ocean: 1820 },
+        "CO, Denver East": { land: 700, ocean: 1820 },
+        "IA, Des Moines": { land: 750, ocean: 1695 },
+        "MI, Detroit": { land: 700, ocean: 1695 },
+        "AL, Dothan": { land: 450, ocean: 1695 },
+        "MD, Dundalk": { land: 400, ocean: 1695 },
+        "TX, El Paso": { land: 575, ocean: 1820 },
+        "CA, East Bay": { land: 525, ocean: 2220 },
+        "MD, Elkton": { land: 400, ocean: 1695 },
+        "NJ, Englishtown": { land: 285, ocean: 1695 },
+        "PA, Erie": { land: 600, ocean: 1695 },
+        "OR, Eugene": { land: 800, ocean: 2220 },
+        "ND, Fargo": { land: 1225, ocean: 1695 },
+        "AR, Fayetteville": { land: 525, ocean: 1820 },
+        "MI, Flint": { land: 735, ocean: 1695 },
+        "CA, Fontana": { land: 300, ocean: 2220 },
+        "FL, Fort Myers": { land: 450, ocean: 1695 },
+        "FL, Fort Pierce": { land: 425, ocean: 1695 },
+        "IN, Fort Wayne": { land: 675, ocean: 1695 },
+        "TX, Fort Worth North": { land: 375, ocean: 1820 },
+        "VA, Fredericksburg-South": { land: 400, ocean: 1695 },
+        "CA, Fremont": { land: 475, ocean: 2220 },
+        "CA, Fresno": { land: 425, ocean: 2220 },
+        "MI, Grand Rapids": { land: 750, ocean: 1695 },
+        "NC, Greensboro": { land: 425, ocean: 1695 },
+        "SC, Greenville": { land: 350, ocean: 1695 },
+        "MS, Grenada": { land: 550, ocean: 1695 },
+        "MS, Gulf Coast": { land: 525, ocean: 1695 },
+        "CT, Hartford": { land: 375, ocean: 1695 },
+        "CT, Hartford-South": { land: 350, ocean: 1695 },
+        "CA, High Desert": { land: 325, ocean: 2220 },
+        "NC, High Point": { land: 450, ocean: 1695 },
+        "TX, Houston": { land: 250, ocean: 1820 },
+        "TX, Houston South": { land: 250, ocean: 1820 },
+        "TX, Houston-North": { land: 250, ocean: 1820 },
+        "AL, Huntsville": { land: 475, ocean: 1695 },
+        "IN, Indianapolis": { land: 675, ocean: 1695 },
+        "IN, Indianapolis South": { land: 675, ocean: 1695 },
+        "MS, Jackson": { land: 525, ocean: 1695 },
+        "FL, Jacksonville": { land: 325, ocean: 1695 },
+        "KS, Kansas City": { land: 700, ocean: 1695 },
+        "MO, Kansas City East": { land: 650, ocean: 1695 },
+        "TN, Knoxville": { land: 500, ocean: 1695 },
+        "MD, LAUREL": { land: 400, ocean: 1695 },
+        "LA, Lafayette": { land: 400, ocean: 1820 },
+        "NV, Las Vegas": { land: 400, ocean: 2220 },
+        "SC, Lexington": { land: 325, ocean: 1695 },
+        "IL, Lincoln": { land: 725, ocean: 1695 },
+        "AR, Little Rock": { land: 525, ocean: 1820 },
+        "NY, Long Island": { land: 350, ocean: 1695 },
+        "TX, Longview": { land: 350, ocean: 1820 },
+        "CA, Los Angeles": { land: 250, ocean: 2220 },
+        "CA, Los Angeles South": { land: 265, ocean: 2220 },
+        "KY, Louisville": { land: 650, ocean: 1695 },
+        "KY, Louisville North": { land: 650, ocean: 1695 },
+        "TX, Lubbock": { land: 525, ocean: 1820 },
+        "FL, MIAMI": { land: 450, ocean: 1695 },
+        "GA, Macon": { land: 400, ocean: 1695 },
+        "NH, Manchester": { land: 475, ocean: 1695 },
+        "TX, Mcallen": { land: 450, ocean: 1820 },
+        "TN, Memphis": { land: 550, ocean: 1695 },
+        "MD, Metro DC": { land: 400, ocean: 1695 },
+        "FL, Miami-North": { land: 450, ocean: 1695 },
+        "WI, Milwaukee": { land: 750, ocean: 1695 },
+        "MN, Minneapolis South": { land: 800, ocean: 1695 },
+        "MN, Minneapolis/St. Paul": { land: 725, ocean: 1695 },
+        "MT, Missoula": { land: 1600, ocean: 1695 },
+        "NJ, NORTHERN NEW JERSEY": { land: 325, ocean: 1695 },
+        "TN, Nashville": { land: 500, ocean: 1695 },
+        "DE, New Castle": { land: 375, ocean: 1695 },
+        "LA, New Orleans": { land: 450, ocean: 1820 },
+        "LA, New Orleans East": { land: 450, ocean: 1695 },
+        "NY, Newburgh": { land: 300, ocean: 1695 },
+        "CA, North Hollywood": { land: 275, ocean: 2220 },
+        "VA, Northern Virginia": { land: 400, ocean: 1695 },
+        "OK, Oklahoma City": { land: 525, ocean: 1820 },
+        "NE, Omaha": { land: 850, ocean: 1695 },
+        "NE, Omaha South": { land: 850, ocean: 1695 },
+        "FL, Orlando": { land: 400, ocean: 1695 },
+        "FL, Orlando-North": { land: 425, ocean: 1695 },
+        "KY, Paducah": { land: 700, ocean: 1695 },
+        "FL, Pensacola": { land: 450, ocean: 1695 },
+        "TX, Permian Basin": { land: 460, ocean: 1820 },
+        "PA, Philadelphia": { land: 325, ocean: 1695 },
+        "PA, Philadelphia East": { land: 325, ocean: 1695 },
+        "AZ, Phoenix": { land: 425, ocean: 2220 },
+        "PA, Pittsburgh": { land: 500, ocean: 1695 },
+        "PA, Pittsburgh-North": { land: 500, ocean: 1695 },
+        "NJ, Port Murray": { land: 325, ocean: 1695 },
+        "WI, Portage": { land: 750, ocean: 1695 },
+        "OR, Portland": { land: 850, ocean: 2220 },
+        "ME, Portland - Gorham": { land: 550, ocean: 1695 },
+        "OR, Portland South": { land: 850, ocean: 2220 },
+        "OR, Portland West": { land: 850, ocean: 2220 },
+        "RI, Providence": { land: 400, ocean: 1695 },
+        "VA, Pulaski": { land: 500, ocean: 1695 },
+        "NC, Raleigh": { land: 400, ocean: 1695 },
+        "NV, Reno": { land: 600, ocean: 2220 },
+        "VA, Richmond": { land: 390, ocean: 1695 },
+        "CA, Riverside": { land: 300, ocean: 2220 },
+        "VA, Roanoke": { land: 550, ocean: 1695 },
+        "NY, Rochester": { land: 525, ocean: 1695 },
+        "TX, SAN ANTONIO": { land: 350, ocean: 1820 },
+        "CA, SAN BERNARDINO": { land: 275, ocean: 2220 },
+        "CA, Sacramento": { land: 475, ocean: 2220 },
+        "UT, Salt Lake City": { land: 525, ocean: 2220 },
+        "TX, San Antonio-South": { land: 350, ocean: 1820 },
+        "CA, San Diego": { land: 325, ocean: 2220 },
+        "CA, Santa Clarita": { land: 325, ocean: 2220 },
+        "GA, Savannah": { land: 240, ocean: 1695 },
+        "NJ, Sayreville": { land: 275, ocean: 1695 },
+        "PA, Scranton": { land: 375, ocean: 1695 },
+        "WA, Seattle": { land: 275, ocean: 1775 },
+        "WV, Shady Spring": { land: 600, ocean: 1695 },
+        "LA, Shreveport": { land: 400, ocean: 1820 },
+        "SD, Sioux Falls": { land: 1075, ocean: 1695 },
+        "IN, South Bend": { land: 675, ocean: 1695 },
+        "NJ, Southern New Jersey": { land: 315, ocean: 1695 },
+        "WA, Spokane": { land: 450, ocean: 1775 },
+        "MO, Springfield": { land: 675, ocean: 1695 },
+        "MN, St. Cloud": { land: 775, ocean: 1695 },
+        "IL, St. Louis": { land: 675, ocean: 1695 },
+        "NY, Staten Island": { land: 350, ocean: 1695 },
+        "VA, Suffolk": { land: 475, ocean: 1695 },
+        "NY, Syracuse": { land: 425, ocean: 1695 },
+        "FL, Tampa": { land: 425, ocean: 1695 },
+        "FL, Tampa North": { land: 425, ocean: 1695 },
+        "MA, Taunton": { land: 450, ocean: 1695 },
+        "MA, Templeton": { land: 450, ocean: 1695 },
+        "VA, Tidewater": { land: 450, ocean: 1695 },
+        "GA, Tifton": { land: 375, ocean: 1695 },
+        "AZ, Tucson": { land: 475, ocean: 2220 },
+        "OK, Tulsa": { land: 550, ocean: 1820 },
+        "FL, West Palm Beach": { land: 475, ocean: 1695 },
+        "CO, Western Colorado": { land: 1150, ocean: 1820 },
+        "KS, Wichita": { land: 675, ocean: 1820 },
+        "NC, Wilmington": { land: 450, ocean: 1695 },
+        "PA, York Springs": { land: 400, ocean: 1695 },
+        "CA, Stockton": { land: 500, ocean: 2220 },
+        "NY, Monticello": { land: 350, ocean: 1695 },
+        "CA, Sacramento West": { land: 500, ocean: 2220 },
+        "AL, Mobile": { land: 475, ocean: 1695 }
+    }
+};
     let currentDiscountUSA = 0;
 
     function setDiscountUSA(val, btn) {
@@ -656,17 +1117,133 @@
         calcUSA();
     }
     function getCopartFee(bid) {
-        if (bid <= 0) return 0;
-        let t = bid < 50 ? 1 : bid < 100 ? 25 : bid < 500 ? 125 : bid < 1000 ? 200 : bid < 5000 ? 650 : 750;
-        let i = bid < 100 ? 0 : bid < 500 ? 50 : bid < 1000 ? 60 : 110;
-        return t + i + 150;
-    }
+    if (bid <= 0) return 0;
+
+    // 1. Сбор на цену (основной сбор)
+    let priceFee = 0;
+    if (bid < 100) priceFee = 1.00;
+    else if (bid < 200) priceFee = 25.00;
+    else if (bid < 300) priceFee = 60.00;
+    else if (bid < 350) priceFee = 85.00;
+    else if (bid < 400) priceFee = 100.00;
+    else if (bid < 450) priceFee = 125.00;
+    else if (bid < 500) priceFee = 135.00;
+    else if (bid < 550) priceFee = 145.00;
+    else if (bid < 600) priceFee = 155.00;
+    else if (bid < 700) priceFee = 170.00;
+    else if (bid < 800) priceFee = 195.00;
+    else if (bid < 900) priceFee = 215.00;
+    else if (bid < 1000) priceFee = 230.00;
+    else if (bid < 1200) priceFee = 250.00;
+    else if (bid < 1300) priceFee = 270.00;
+    else if (bid < 1400) priceFee = 285.00;
+    else if (bid < 1500) priceFee = 300.00;
+    else if (bid < 1600) priceFee = 315.00;
+    else if (bid < 1700) priceFee = 330.00;
+    else if (bid < 1800) priceFee = 350.00;
+    else if (bid < 2000) priceFee = 370.00;
+    else if (bid < 2400) priceFee = 390.00;
+    else if (bid < 2500) priceFee = 425.00;
+    else if (bid < 3000) priceFee = 460.00;
+    else if (bid < 3500) priceFee = 505.00;
+    else if (bid < 4000) priceFee = 555.00;
+    else if (bid < 4500) priceFee = 600.00;
+    else if (bid < 5000) priceFee = 625.00;
+    else if (bid < 5500) priceFee = 650.00;
+    else if (bid < 6000) priceFee = 675.00;
+    else if (bid < 6500) priceFee = 700.00;
+    else if (bid < 7000) priceFee = 720.00;
+    else if (bid < 7500) priceFee = 755.00;
+    else if (bid < 8000) priceFee = 775.00;
+    else if (bid < 8500) priceFee = 800.00;
+    else if (bid < 10000) priceFee = 820.00;
+    else if (bid < 11500) priceFee = 850.00;
+    else if (bid < 12000) priceFee = 860.00;
+    else if (bid < 12500) priceFee = 875.00;
+    else if (bid < 15000) priceFee = 890.00;
+    else priceFee = bid * 0.06; // 6.00% от цены авто при $15 000 и выше
+
+    // 2. Сбор за участие (интернет-ставка)
+    let liveBidFee = 0;
+    if (bid < 100) liveBidFee = 0;
+    else if (bid < 500) liveBidFee = 50.00;
+    else if (bid < 1000) liveBidFee = 65.00;
+    else if (bid < 1500) liveBidFee = 85.00;
+    else if (bid < 2000) liveBidFee = 95.00;
+    else if (bid < 4000) liveBidFee = 110.00;
+    else if (bid < 6000) liveBidFee = 125.00;
+    else if (bid < 8000) liveBidFee = 145.00;
+    else liveBidFee = 160.00;
+
+    // 3. Дополнительные фиксированные сборы (Gate/Env Fee, если необходимы)
+    const fixedFees = 150; 
+
+    return priceFee + liveBidFee + fixedFees;
+}
     function getIAAIFee(bid) {
-        if (bid <= 0) return 0;
-        let t = bid < 100 ? 25 : bid < 500 ? 100 : bid < 1000 ? 200 : 500;
-        let i = bid < 100 ? 0 : bid < 500 ? 40 : bid < 1000 ? 60 : 110;
-        return t + i + 160;
-    }
+    if (bid <= 0) return 0;
+
+    // 1. Сбор на цену (основной сбор)
+    let priceFee = 0;
+    if (bid < 100) priceFee = 1.00;
+    else if (bid < 200) priceFee = 25.00;
+    else if (bid < 300) priceFee = 60.00;
+    else if (bid < 350) priceFee = 85.00;
+    else if (bid < 400) priceFee = 100.00;
+    else if (bid < 450) priceFee = 125.00;
+    else if (bid < 500) priceFee = 135.00;
+    else if (bid < 550) priceFee = 145.00;
+    else if (bid < 600) priceFee = 155.00;
+    else if (bid < 700) priceFee = 170.00;
+    else if (bid < 800) priceFee = 195.00;
+    else if (bid < 900) priceFee = 215.00;
+    else if (bid < 1000) priceFee = 230.00;
+    else if (bid < 1200) priceFee = 250.00;
+    else if (bid < 1300) priceFee = 270.00;
+    else if (bid < 1400) priceFee = 285.00;
+    else if (bid < 1500) priceFee = 300.00;
+    else if (bid < 1600) priceFee = 315.00;
+    else if (bid < 1700) priceFee = 330.00;
+    else if (bid < 1800) priceFee = 350.00;
+    else if (bid < 2000) priceFee = 370.00;
+    else if (bid < 2400) priceFee = 390.00;
+    else if (bid < 2500) priceFee = 425.00;
+    else if (bid < 3000) priceFee = 460.00;
+    else if (bid < 3500) priceFee = 505.00;
+    else if (bid < 4000) priceFee = 555.00;
+    else if (bid < 4500) priceFee = 600.00;
+    else if (bid < 5000) priceFee = 625.00;
+    else if (bid < 5500) priceFee = 650.00;
+    else if (bid < 6000) priceFee = 675.00;
+    else if (bid < 6500) priceFee = 700.00;
+    else if (bid < 7000) priceFee = 720.00;
+    else if (bid < 7500) priceFee = 755.00;
+    else if (bid < 8000) priceFee = 775.00;
+    else if (bid < 8500) priceFee = 800.00;
+    else if (bid < 10000) priceFee = 820.00;
+    else if (bid < 11500) priceFee = 850.00;
+    else if (bid < 12000) priceFee = 860.00;
+    else if (bid < 12500) priceFee = 875.00;
+    else if (bid < 15000) priceFee = 890.00;
+    else priceFee = bid * 0.06; // 6.0% от цены продажи при $15 000 и выше
+
+    // 2. Сбор за участие (онлайн-ставка)
+    let liveBidFee = 0;
+    if (bid < 100) liveBidFee = 0;
+    else if (bid < 500) liveBidFee = 50.00;
+    else if (bid < 1000) liveBidFee = 65.00;
+    else if (bid < 1500) liveBidFee = 85.00;
+    else if (bid < 2000) liveBidFee = 95.00;
+    else if (bid < 4000) liveBidFee = 110.00;
+    else if (bid < 6000) liveBidFee = 125.00;
+    else if (bid < 8000) liveBidFee = 145.00;
+    else liveBidFee = 160.00;
+
+    // 3. Дополнительные фиксированные сборы (Gate / Environmental / Service Fee)
+    const fixedFees = 160; 
+
+    return priceFee + liveBidFee + fixedFees;
+}
     function calcUSA() {
         const name = document.getElementById('usa_name').value || "ELVION AUTO";
         const vin = document.getElementById('usa_vin').value;
@@ -691,7 +1268,7 @@
         let aucFee = (auction === "Copart") ? getCopartFee(bid) : getIAAIFee(bid);
         let locData = (logisticsUSA[auction] && logisticsUSA[auction][location]) ? logisticsUSA[auction][location] : { land: 350, ocean: 1600 };
         let shipUSA = locData.land + (bodyType === 'suv' ? 100 : 0);
-        let shipOcean = bodyType === 'sedan' ? locData.ocean - 450 : bodyType === 'crossover' ? locData.ocean - 350 : bodyType === 'suv' ? (locData.ocean - 450) * 2 : locData.ocean - 870;
+        let shipOcean = bodyType === 'sedan' ? locData.ocean - 350 : bodyType === 'crossover' ? locData.ocean - 250 : bodyType === 'suv' ? (locData.ocean - 350) * 2 : locData.ocean - 870;
         let rivneShip = bodyType === 'moto' ? 650 : 950;
         let broker = 700;
         let ins = (bid + aucFee) * 0.025 + 150;
